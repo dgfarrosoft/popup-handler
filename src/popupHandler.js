@@ -3,6 +3,8 @@ function PopupHandler () {
     this.deferredTriggerAttribute = 'data-deferred-popup';
     this.disabledFormClass = 'js-disabled';
     this.popupClass = 'b-popup';
+    this.popupWrapperClass = this.popupClass + '__wrapper';
+    this.popupCloseSelector = '[data-popup-close]';
     this.popupContents = {};
     this.popupHandlers = {};
     this.focusOnFirstInput = true;
@@ -18,10 +20,12 @@ function PopupHandler () {
             this.disabledFormClass = handlerSettings.disabledFormClass === undefined ? this.disabledFormClass : handlerSettings.disabledFormClass;
             this.popupClass = handlerSettings.popupClass === undefined ? this.popupClass : handlerSettings.popupClass;
             this.focusOnFirstInput = handlerSettings.focusOnFirstInput === undefined ? this.focusOnFirstInput : handlerSettings.focusOnFirstInput;
+            this.popupCloseSelector = handlerSettings.popupCloseSelector === undefined ? this.popupCloseSelector : handlerSettings.popupCloseSelector;
         }
 
         this.getPopupsContent(this.triggerAttribute);
         this.injectPopup();
+        this.initEventListeners();
     };
 
     this.getPopupsContent = function () {
@@ -76,10 +80,12 @@ function PopupHandler () {
         }
     };
 
-    this.showPopup = function ( pushedButton, defer ) {
-        defer = defer === undefined ? false : defer;
-        var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
-        var popupType = pushedButton.attr(attr);
+    this.showPopup = function ( popupType, defer ) {
+        if ( typeof popupType !== 'string' ) {
+            defer = defer === undefined ? false : defer;
+            var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
+            popupType = popupType.attr(attr);
+        }
         this.hidePopup();
 
         if ( this.popupContents[popupType] !== undefined ) {
@@ -180,8 +186,27 @@ function PopupHandler () {
 
     this.injectPopup = function () {
         if ( $('.' + this.popupClass).length == 0 ) {
-            $('body').append('<div class = "' + this.popupClass + '__wrapper"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
+            $('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
         }
         this.popup = $('.' + this.popupClass);
+    };
+
+    this.initEventListeners = function () {
+        var $this = this;
+        $(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
+            event.preventDefault();
+
+            $this.showPopup($(this).attr($this.triggerAttribute));
+
+            $($this.popupCloseSelector).click(function () {
+                $this.hidePopup();
+            });
+
+            $(document).click(function ( event ) {
+                if ( $(event.target).hasClass($this.popupWrapperClass) ) {
+                    $this.hidePopup();
+                }
+            });
+        });
     };
 }
