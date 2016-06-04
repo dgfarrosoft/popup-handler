@@ -2,10 +2,13 @@ function PopupHandler () {
     this.triggerAttribute = 'data-popup';
     this.deferredTriggerAttribute = 'data-deferred-popup';
     this.disabledFormClass = 'js-disabled';
-    this.popupSelector = '.b-popup';
+    this.popupClass = 'b-popup';
+    this.popupWrapperClass = this.popupClass + '__wrapper';
+    this.popupCloseSelector = '[data-popup-close]';
     this.popupContents = {};
     this.popupHandlers = {};
     this.focusOnFirstInput = true;
+    this.closeOnWrapperClick = true;
 
     this.init = function ( handlerSettings ) {
         if ( handlerSettings !== undefined ) {
@@ -16,12 +19,15 @@ function PopupHandler () {
             this.triggerAttribute = handlerSettings.triggerAttribute === undefined ? this.triggerAttribute : handlerSettings.triggerAttribute;
             this.deferredTriggerAttribute = handlerSettings.deferredTriggerAttribute === undefined ? this.deferredTriggerAttribute : handlerSettings.deferredTriggerAttribute;
             this.disabledFormClass = handlerSettings.disabledFormClass === undefined ? this.disabledFormClass : handlerSettings.disabledFormClass;
-            this.popupSelector = handlerSettings.popupSelector === undefined ? this.popupSelector : handlerSettings.popupSelector;
+            this.popupClass = handlerSettings.popupClass === undefined ? this.popupClass : handlerSettings.popupClass;
             this.focusOnFirstInput = handlerSettings.focusOnFirstInput === undefined ? this.focusOnFirstInput : handlerSettings.focusOnFirstInput;
+            this.popupCloseSelector = handlerSettings.popupCloseSelector === undefined ? this.popupCloseSelector : handlerSettings.popupCloseSelector;
+            this.closeOnWrapperClick = handlerSettings.closeOnWrapperClick === undefined ? this.closeOnWrapperClick : handlerSettings.closeOnWrapperClick;
         }
-        this.popup = $(this.popupSelector);
 
         this.getPopupsContent(this.triggerAttribute);
+        this.injectPopup();
+        this.initEventListeners();
     };
 
     this.getPopupsContent = function () {
@@ -76,19 +82,21 @@ function PopupHandler () {
         }
     };
 
-    this.showPopup = function ( pushedButton, defer ) {
-        defer = defer === undefined ? false : defer;
-        var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
-        var popupType = pushedButton.attr(attr);
+    this.showPopup = function ( popupType, defer ) {
+        if ( typeof popupType !== 'string' ) {
+            defer = defer === undefined ? false : defer;
+            var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
+            popupType = popupType.attr(attr);
+        }
         this.hidePopup();
 
         if ( this.popupContents[popupType] !== undefined ) {
             if ( this.popupContents[popupType].formID != "" ) {
                 this.fillPopup(popupType);
-                $('body').addClass('element--overflow-hidden');
-                $('.b-site-content').addClass('element--unfocused');
 
-                this.popup.parent().addClass('element--visible');
+                $(document).trigger('popup-show', [this.popup]);
+
+                this.popup.parent().show();
                 centerVertically(this.popup);
                 if ( this.focusOnFirstInput ) {
                     this.popup.find('input').eq(0).focus();
@@ -102,10 +110,10 @@ function PopupHandler () {
 
     this.hidePopup = function () {
         this.popup.parent().css('padding-top', 0);
-        $('body').removeClass('element--overflow-hidden');
-        $('.b-site-content').removeClass('element--unfocused');
 
-        this.popup.parent().removeClass('element--visible');
+        $(document).trigger('popup-hide', [this.popup]);
+
+        this.popup.parent().hide();
         this.popup.html('');
     };
 
@@ -176,5 +184,33 @@ function PopupHandler () {
         } else {
             console.log('no content');
         }
+    };
+
+    this.injectPopup = function () {
+        if ( $('.' + this.popupClass).length == 0 ) {
+            $('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
+        }
+        this.popup = $('.' + this.popupClass);
+    };
+
+    this.initEventListeners = function () {
+        var $this = this;
+        $(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
+            event.preventDefault();
+
+            $this.showPopup($(this).attr($this.triggerAttribute));
+
+            $($this.popupCloseSelector).click(function () {
+                $this.hidePopup();
+            });
+
+            if ( $this.closeOnWrapperClick ) {
+                $(document).click(function ( event ) {
+                    if ( $(event.target).hasClass($this.popupWrapperClass) ) {
+                        $this.hidePopup();
+                    }
+                });
+            }
+        });
     };
 }
