@@ -1,5 +1,6 @@
 function PopupHandler () {
     this.triggerAttribute = 'data-popup';
+    this.additionalDataAttributes = [];
     this.deferredTriggerAttribute = 'data-deferred-popup';
     this.disabledFormClass = 'js-disabled';
     this.popupClass = 'b-popup';
@@ -10,22 +11,14 @@ function PopupHandler () {
     this.focusOnFirstInput = true;
     this.closeOnWrapperClick = true;
 
-    this.init = function ( handlerSettings ) {
-        if ( handlerSettings !== undefined ) {
-            this.popupHandlers = handlerSettings.popupHandlers;
-            if ( handlerSettings.additionalDataAttributes !== undefined ) {
-                this.additionalDataAttributes = handlerSettings.additionalDataAttributes;
+    this.init = function ( settings ) {
+        if ( settings !== undefined ) {
+            for ( var setting in settings ) {
+                this[setting] = settings[setting];
             }
-            this.triggerAttribute = handlerSettings.triggerAttribute === undefined ? this.triggerAttribute : handlerSettings.triggerAttribute;
-            this.deferredTriggerAttribute = handlerSettings.deferredTriggerAttribute === undefined ? this.deferredTriggerAttribute : handlerSettings.deferredTriggerAttribute;
-            this.disabledFormClass = handlerSettings.disabledFormClass === undefined ? this.disabledFormClass : handlerSettings.disabledFormClass;
-            this.popupClass = handlerSettings.popupClass === undefined ? this.popupClass : handlerSettings.popupClass;
-            this.focusOnFirstInput = handlerSettings.focusOnFirstInput === undefined ? this.focusOnFirstInput : handlerSettings.focusOnFirstInput;
-            this.popupCloseSelector = handlerSettings.popupCloseSelector === undefined ? this.popupCloseSelector : handlerSettings.popupCloseSelector;
-            this.closeOnWrapperClick = handlerSettings.closeOnWrapperClick === undefined ? this.closeOnWrapperClick : handlerSettings.closeOnWrapperClick;
         }
 
-        this.getPopupsContent(this.triggerAttribute);
+        this.getPopupsContent();
         this.injectPopup();
         this.initEventListeners();
     };
