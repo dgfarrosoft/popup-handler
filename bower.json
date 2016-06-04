@@ -1,0 +1,20 @@
+{
+  "name": "popup-handler",
+  "description": "popup handler",
+  "main": "dist/popup-handler.js",
+  "authors": [
+    "dima_goncharuk_farrosoft <dmitry.goncharuk@farrosoft.com>"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.4"
+  }
+}
