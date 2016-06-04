@@ -8,6 +8,7 @@ function PopupHandler () {
     this.popupContents = {};
     this.popupHandlers = {};
     this.focusOnFirstInput = true;
+    this.closeOnWrapperClick = true;
 
     this.init = function ( handlerSettings ) {
         if ( handlerSettings !== undefined ) {
@@ -21,6 +22,7 @@ function PopupHandler () {
             this.popupClass = handlerSettings.popupClass === undefined ? this.popupClass : handlerSettings.popupClass;
             this.focusOnFirstInput = handlerSettings.focusOnFirstInput === undefined ? this.focusOnFirstInput : handlerSettings.focusOnFirstInput;
             this.popupCloseSelector = handlerSettings.popupCloseSelector === undefined ? this.popupCloseSelector : handlerSettings.popupCloseSelector;
+            this.closeOnWrapperClick = handlerSettings.closeOnWrapperClick === undefined ? this.closeOnWrapperClick : handlerSettings.closeOnWrapperClick;
         }
 
         this.getPopupsContent(this.triggerAttribute);
@@ -202,11 +204,13 @@ function PopupHandler () {
                 $this.hidePopup();
             });
 
-            $(document).click(function ( event ) {
-                if ( $(event.target).hasClass($this.popupWrapperClass) ) {
-                    $this.hidePopup();
-                }
-            });
+            if ( $this.closeOnWrapperClick ) {
+                $(document).click(function ( event ) {
+                    if ( $(event.target).hasClass($this.popupWrapperClass) ) {
+                        $this.hidePopup();
+                    }
+                });
+            }
         });
     };
 }
