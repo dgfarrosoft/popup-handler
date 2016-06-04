@@ -12,6 +12,8 @@
     "node_modules",
     "bower_components",
     "src",
+    "gulpfile.js",
+    "package.json",
     "test",
     "tests"
   ],
