@@ -88,7 +88,7 @@ function PopupHandler () {
                 $('body').addClass('element--overflow-hidden');
                 $('.b-site-content').addClass('element--unfocused');
 
-                this.popup.parent().addClass('element--visible');
+                this.popup.parent().show();
                 centerVertically(this.popup);
                 if ( this.focusOnFirstInput ) {
                     this.popup.find('input').eq(0).focus();
@@ -105,7 +105,7 @@ function PopupHandler () {
         $('body').removeClass('element--overflow-hidden');
         $('.b-site-content').removeClass('element--unfocused');
 
-        this.popup.parent().removeClass('element--visible');
+        this.popup.parent().hide();
         this.popup.html('');
     };
 
