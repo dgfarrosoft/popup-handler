@@ -1,6 +1,7 @@
 function PopupHandler () {
     if ( this instanceof PopupHandler ) {
         this.triggerAttribute = 'data-popup';
+        this.popupVisible = false;
         this.additionalDataAttributes = [];
         this.deferredTriggerAttribute = 'data-deferred-popup';
         this.disabledFormClass = 'js-disabled';
@@ -11,6 +12,14 @@ function PopupHandler () {
         this.popupHandlers = {};
         this.focusOnFirstInput = true;
         this.closeOnWrapperClick = true;
+        this.ajaxUrl = '';
+        this.ajaxRequestData = {};
+        this.animatedShow = true;
+        this.popupShowSpeed = 200;
+        this.backgroundTransition = true;
+        this.backgroundTransitionSpeed = 1000;
+        this.darkBackground = false;
+        this.popupStyles = 'background-color:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
 
         this.init = function ( settings ) {
             if ( settings !== undefined ) {
@@ -21,18 +30,21 @@ function PopupHandler () {
 
             this.getPopupsContent();
             this.injectPopup();
+            this.setPopupStyles();
             this.initEventListeners();
+
         };
 
         this.getPopupsContent = function () {
-
             var $this = this;
-            var ajaxRequestData = this.getAjaxRequestData();
-            if ( Object.keys(ajaxRequestData.popupRequestData).length !== 0 ) {
+            var newAjaxRequestData = this.getAjaxRequestData();
+            var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
+            this.ajaxRequestData = newAjaxRequestData;
+            if ( Object.keys(newAjaxRequestData.popupRequestData).length !== 0 && this.ajaxUrl != '' && !isRequestsSame ) {
                 $.ajax({
-                    url: themeVars.ajaxUrl,
+                    url: this.ajaxUrl,
                     type: "POST",
-                    data: ajaxRequestData,
+                    data: newAjaxRequestData,
                     success: function ( response ) {
                         if ( response != "no content" ) {
                             response = $.parseJSON(response);
@@ -42,6 +54,7 @@ function PopupHandler () {
                                     content: response[popupType].content
                                 };
                             }
+
                         } else {
                             console.log(response);
                         }
@@ -57,23 +70,20 @@ function PopupHandler () {
             var $this = this;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
-            $('form#' + this.popupContents[popupType].formID).submit(function ( event ) {
-                event.preventDefault();
-                var currentForm = $(this);
+            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] == "function" ) {
+                $('form#' + this.popupContents[popupType].formID).submit(function ( event ) {
+                    event.preventDefault();
+                    var currentForm = $(this);
 
-                if ( !currentForm.hasClass($this.disabledFormClass) ) {
-                    $this.formSubmission($this, popupType, currentForm);
-                }
-            });
+                    if ( !currentForm.hasClass($this.disabledFormClass) ) {
+                        $this.formSubmission($this, popupType, currentForm);
+                    }
+                });
+            }
         };
 
         this.formSubmission = function ( popupHandler, handlerType, form ) {
-            if ( this.popupHandlers[handlerType] !== undefined ) {
-                this.popupHandlers[handlerType](form, popupHandler);
-            } else {
-                console.log('formSubmission-default');
-                console.log(handlerType);
-            }
+            this.popupHandlers[handlerType](form, popupHandler);
         };
 
         this.showPopup = function ( popupType, defer ) {
@@ -82,16 +92,23 @@ function PopupHandler () {
                 var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
                 popupType = popupType.attr(attr);
             }
+
             this.hidePopup();
 
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].formID != "" ) {
                     this.fillPopup(popupType);
+                    this.popupVisible = true;
 
                     $(document).trigger('popup-show', [this.popup]);
 
-                    this.popup.parent().show();
-                    centerVertically(this.popup);
+                    this.popupWrapper.show();
+                    this.centerVertically();
+                    if ( this.darkBackground ) {
+                        this.popupWrapper.css('background-color', "rgba(1, 1, 1, .7)");
+                    } else {
+                        this.popupWrapper.css('background-color', "rgba(207, 207, 207, .6)");
+                    }
                     if ( this.focusOnFirstInput ) {
                         this.popup.find('input').eq(0).focus();
                     }
@@ -103,12 +120,18 @@ function PopupHandler () {
         };
 
         this.hidePopup = function () {
-            this.popup.parent().css('padding-top', 0);
+            this.popupWrapper.css('-webkit-transition', 'none');
+            this.popupWrapper.css('transition', 'none');
 
-            $(document).trigger('popup-hide', [this.popup]);
-
-            this.popup.parent().hide();
+            this.popupWrapper.css('padding-top', 0);
+            this.popupWrapper.hide();
             this.popup.html('');
+
+            this.setPopupStyles();
+            if ( !this.popupVisible ) {
+                this.popupWrapper.css('background-color', "transparent");
+            }
+            this.popupVisible = false;
         };
 
         this.getSingleAjaxRequestData = function ( element, requestData ) {
@@ -116,10 +139,11 @@ function PopupHandler () {
                 requestData = {};
             }
             var attributeValue, quantity = 0;
-            if ( this.additionalDataAttributes !== undefined ) {
+            if ( this.additionalDataAttributes.length != 0 ) {
                 for ( var i = 0; i < this.additionalDataAttributes.length; i++ ) {
                     attributeValue = element.attr(this.additionalDataAttributes[i]);
                     if ( attributeValue !== undefined ) {
+                        requestData = requestData == 0 ? {} : requestData;
                         requestData[this.additionalDataAttributes[i]] = attributeValue;
                         quantity++;
                     }
@@ -128,8 +152,9 @@ function PopupHandler () {
                         requestData = 0;
                     }
                 }
+            } else {
+                requestData = 0;
             }
-
             return requestData;
         };
 
@@ -142,13 +167,13 @@ function PopupHandler () {
             var popupTriggers = $('[' + this.triggerAttribute + ']');
             var deferredPopupTriggers = $('[' + this.deferredTriggerAttribute + ']');
 
-            ajaxRequestData = this.fillRequestData(ajaxRequestData, popupTriggers);
-            ajaxRequestData = this.fillRequestData(ajaxRequestData, deferredPopupTriggers, true);
+            ajaxRequestData = this.fillRequestData(popupTriggers, ajaxRequestData);
+            ajaxRequestData = this.fillRequestData(deferredPopupTriggers, ajaxRequestData, true);
 
             return ajaxRequestData;
         };
 
-        this.fillRequestData = function ( ajaxRequestData, popupTriggers, defer ) {
+        this.fillRequestData = function ( popupTriggers, ajaxRequestData, defer ) {
             if ( defer === undefined ) {
                 defer = false;
             }
@@ -157,8 +182,9 @@ function PopupHandler () {
             for ( var i = 0; i < popupTriggers.length; i++ ) {
                 element = $(popupTriggers[i]);
                 popupType = element.attr(attr);
-                if ( !this.popupContents[popupType] && popupType != undefined ) {
-                    ajaxRequestData.popupRequestData[popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[popupType]);
+
+                if ( popupType != undefined ) {
+                    ajaxRequestData.popupRequestData[popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData.popupRequestData[popupType]);
                 }
             }
             return ajaxRequestData;
@@ -185,6 +211,7 @@ function PopupHandler () {
                 $('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
             }
             this.popup = $('.' + this.popupClass);
+            this.popupWrapper = this.popup.closest('.' + this.popupWrapperClass);
         };
 
         this.initEventListeners = function () {
@@ -207,6 +234,31 @@ function PopupHandler () {
                 }
             });
         };
+
+        this.centerVertically = function () {
+            var parent = this.popupWrapper;
+            var padding = (parent.outerHeight() - this.popup.outerHeight()) / 2;
+            parent.css('padding-top', padding);
+        };
+
+        this.isEqual = function ( firstObject, secondObject ) {
+            return JSON.stringify(firstObject) === JSON.stringify(secondObject);
+        };
+
+        this.setPopupStyles = function () {
+            var transition = [];
+            if ( this.animatedShow ) {
+                transition.push("padding " + this.popupShowSpeed / 1000 + "s");
+            }
+            if ( this.backgroundTransition ) {
+                transition.push("background-color " + this.backgroundTransitionSpeed / 1000 + "s");
+            }
+            if ( transition != "" ) {
+                this.popupStyles += "transition: " + transition + ";";
+            }
+            this.popupWrapper.attr('style', this.popupStyles);
+        }
+
     } else {
         return new PopupHandler();
     }
