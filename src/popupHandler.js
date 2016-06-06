@@ -93,7 +93,7 @@ function PopupHandler () {
                 popupType = popupType.attr(attr);
             }
 
-            this.hidePopup();
+            this.hidePopup(true);
 
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].formID != "" ) {
@@ -104,7 +104,10 @@ function PopupHandler () {
 
                     this.popupWrapper.show();
                     this.centerVertically();
-                    if ( this.darkBackground ) {
+                    if ( this.customWrapperBackground !== undefined ) {
+                        this.popupWrapper.css('background-color', this.customWrapperBackground);
+                    }
+                    else if ( this.darkBackground ) {
                         this.popupWrapper.css('background-color', "rgba(1, 1, 1, .7)");
                     } else {
                         this.popupWrapper.css('background-color', "rgba(207, 207, 207, .6)");
@@ -247,16 +250,19 @@ function PopupHandler () {
 
         this.setPopupStyles = function () {
             var transition = [];
+
+            this.popupWrapper.attr('style', this.popupStyles);
+
             if ( this.animatedShow ) {
                 transition.push("padding " + this.popupShowSpeed / 1000 + "s");
             }
             if ( this.backgroundTransition ) {
                 transition.push("background-color " + this.backgroundTransitionSpeed / 1000 + "s");
             }
+            transition = transition.join(',');
             if ( transition != "" ) {
-                this.popupStyles += "transition: " + transition + ";";
+                this.popupWrapper.css('transition', transition);
             }
-            this.popupWrapper.attr('style', this.popupStyles);
         }
 
     } else {
