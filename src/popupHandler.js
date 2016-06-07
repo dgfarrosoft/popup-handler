@@ -194,7 +194,7 @@ function PopupHandler () {
                 } else if ( this.getFromPage.indexOf(popupType) !== -1 ) {
                     this.popupContents[popupType] = {
                         popupID: popupType,
-                        content: $('[' + this.contentAttribute + '=' + popupType + ']').html()
+                        content: jQuery('[' + this.contentAttribute + '=' + popupType + ']').html()
                     };
                 }
             }
