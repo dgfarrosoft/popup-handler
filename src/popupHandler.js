@@ -1,4 +1,3 @@
-jQuery(function ( $ ) {
     function PopupHandler () {
         if ( this instanceof PopupHandler ) {
             this.triggerAttribute = 'data-popup';
@@ -42,13 +41,13 @@ jQuery(function ( $ ) {
                 var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
                 this.ajaxRequestData = newAjaxRequestData;
                 if ( Object.keys(newAjaxRequestData.popupRequestData).length !== 0 && this.ajaxUrl != '' && !isRequestsSame ) {
-                    $.ajax({
+                    jQuery.ajax({
                         url: this.ajaxUrl,
                         type: "POST",
                         data: newAjaxRequestData,
                         success: function ( response ) {
                             if ( response != "no content" ) {
-                                response = $.parseJSON(response);
+                                response = jQuery.parseJSON(response);
                                 for ( var popupType in response ) {
                                     $this.popupContents[popupType] = {
                                         formID: response[popupType].formID,
@@ -72,9 +71,9 @@ jQuery(function ( $ ) {
                 this.popup.html(this.popupContents[popupType].content);
                 this.getPopupsContent();
                 if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] == "function" ) {
-                    $('form#' + this.popupContents[popupType].formID).submit(function ( event ) {
+                    jQuery('form#' + this.popupContents[popupType].formID).submit(function ( event ) {
                         event.preventDefault();
-                        var currentForm = $(this);
+                        var currentForm = jQuery(this);
 
                         if ( !currentForm.hasClass($this.disabledFormClass) ) {
                             $this.formSubmission($this, popupType, currentForm);
@@ -101,7 +100,7 @@ jQuery(function ( $ ) {
                         this.fillPopup(popupType);
                         this.popupVisible = true;
 
-                        $(document).trigger('popup-show', [this.popup]);
+                        jQuery(document).trigger('popup-show', [this.popup]);
 
                         this.popupWrapper.show();
                         this.centerVertically();
@@ -168,8 +167,8 @@ jQuery(function ( $ ) {
                     popupRequestData: {}
                 };
 
-                var popupTriggers = $('[' + this.triggerAttribute + ']');
-                var deferredPopupTriggers = $('[' + this.deferredTriggerAttribute + ']');
+                var popupTriggers = jQuery('[' + this.triggerAttribute + ']');
+                var deferredPopupTriggers = jQuery('[' + this.deferredTriggerAttribute + ']');
 
                 ajaxRequestData = this.fillRequestData(popupTriggers, ajaxRequestData);
                 ajaxRequestData = this.fillRequestData(deferredPopupTriggers, ajaxRequestData, true);
@@ -184,7 +183,7 @@ jQuery(function ( $ ) {
                 var attr = !defer ? this.triggerAttribute : this.deferredTriggerAttribute;
                 var popupType, element;
                 for ( var i = 0; i < popupTriggers.length; i++ ) {
-                    element = $(popupTriggers[i]);
+                    element = jQuery(popupTriggers[i]);
                     popupType = element.attr(attr);
 
                     if ( popupType != undefined ) {
@@ -198,9 +197,9 @@ jQuery(function ( $ ) {
                 if ( this.popupContents[contentId] !== undefined ) {
                     var tempContent = document.createElement('div');
                     tempContent.innerHTML = this.popupContents[contentId].content;
-                    var tempContentObject = $(tempContent);
+                    var tempContentObject = jQuery(tempContent);
 
-                    $.each(newData, function ( selector, callback ) {
+                    jQuery.each(newData, function ( selector, callback ) {
                         callback(tempContentObject.find(selector), tempContentObject);
                     });
 
@@ -211,27 +210,27 @@ jQuery(function ( $ ) {
             };
 
             this.injectPopup = function () {
-                if ( $('.' + this.popupClass).length == 0 ) {
-                    $('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
+                if ( jQuery('.' + this.popupClass).length == 0 ) {
+                    jQuery('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
                 }
-                this.popup = $('.' + this.popupClass);
+                this.popup = jQuery('.' + this.popupClass);
                 this.popupWrapper = this.popup.closest('.' + this.popupWrapperClass);
             };
 
             this.initEventListeners = function () {
                 var $this = this;
-                $(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
+                jQuery(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
                     event.preventDefault();
 
-                    $this.showPopup($(this).attr($this.triggerAttribute));
+                    $this.showPopup(jQuery(this).attr($this.triggerAttribute));
 
-                    $($this.popupCloseSelector).click(function () {
+                    jQuery($this.popupCloseSelector).click(function () {
                         $this.hidePopup();
                     });
 
                     if ( $this.closeOnWrapperClick ) {
-                        $(document).click(function ( event ) {
-                            if ( $(event.target).hasClass($this.popupWrapperClass) ) {
+                        jQuery(document).click(function ( event ) {
+                            if ( jQuery(event.target).hasClass($this.popupWrapperClass) ) {
                                 $this.hidePopup();
                             }
                         });
@@ -270,4 +269,3 @@ jQuery(function ( $ ) {
             return new PopupHandler();
         }
     }
-});
