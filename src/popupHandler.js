@@ -19,6 +19,7 @@
             this.backgroundTransition = true;
             this.backgroundTransitionSpeed = 1000;
             this.darkBackground = false;
+            this.ajaxAction = 'ajaxGetPopupContent';
             this.popupStyles = 'background-color:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
 
             this.init = function ( settings ) {
@@ -163,7 +164,7 @@
 
             this.getAjaxRequestData = function () {
                 var ajaxRequestData = {
-                    action: "ajaxGetPopupContent",
+                    action: this.ajaxAction,
                     popupRequestData: {}
                 };
 
