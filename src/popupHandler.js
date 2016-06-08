@@ -9,7 +9,7 @@ function PopupHandler () {
         this.disabledFormClass = 'js-disabled';
         this.popupClass = 'b-popup';
         this.popupWrapperClass = this.popupClass + '__wrapper';
-        this.popupCloseSelector = '[data-popup-close]';
+        this.popupCloseSelectors = '[data-popup-close]';
         this.popupContents = {};
         this.popupHandlers = {};
         this.focusOnFirstInput = true;
@@ -30,12 +30,10 @@ function PopupHandler () {
                     this[setting] = settings[setting];
                 }
             }
-
             this.getPopupsContent();
             this.injectPopup();
             this.setPopupStyles();
             this.initEventListeners();
-
         };
 
         this.getPopupsContent = function () {
@@ -43,13 +41,13 @@ function PopupHandler () {
             var newAjaxRequestData = this.getAjaxRequestData();
             var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
             this.ajaxRequestData = newAjaxRequestData;
-            if ( Object.keys(newAjaxRequestData.popupRequestData).length !== 0 && this.ajaxUrl != '' && !isRequestsSame ) {
+            if ( Object.keys(newAjaxRequestData.popupRequestData).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
                 jQuery.ajax({
                     url: this.ajaxUrl,
                     type: "POST",
                     data: newAjaxRequestData,
                     success: function ( response ) {
-                        if ( response != "no content" ) {
+                        if ( response !== "no content" ) {
                             response = jQuery.parseJSON(response);
                             for ( var popupType in response ) {
                                 $this.popupContents[popupType] = {
@@ -73,7 +71,7 @@ function PopupHandler () {
             var $this = this;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
-            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] == "function" ) {
+            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] === "function" ) {
                 jQuery('form#' + this.popupContents[popupType].popupID).submit(function ( event ) {
                     event.preventDefault();
                     var currentForm = jQuery(this);
@@ -99,7 +97,7 @@ function PopupHandler () {
             this.hidePopup(true);
 
             if ( this.popupContents[popupType] !== undefined ) {
-                if ( this.popupContents[popupType].popupID != "" ) {
+                if ( this.popupContents[popupType].popupID !== "" ) {
                     this.fillPopup(popupType);
                     this.popupVisible = true;
 
@@ -145,16 +143,16 @@ function PopupHandler () {
                 requestData = {};
             }
             var attributeValue, quantity = 0;
-            if ( this.additionalDataAttributes.length != 0 ) {
+            if ( this.additionalDataAttributes.length !== 0 ) {
                 for ( var i = 0; i < this.additionalDataAttributes.length; i++ ) {
                     attributeValue = element.attr(this.additionalDataAttributes[i]);
                     if ( attributeValue !== undefined ) {
-                        requestData = requestData == 0 ? {} : requestData;
+                        requestData = requestData === 0 ? {} : requestData;
                         requestData[this.additionalDataAttributes[i]] = attributeValue;
                         quantity++;
                     }
 
-                    if ( i == this.additionalDataAttributes.length - 1 && quantity == 0 ) {
+                    if ( i === this.additionalDataAttributes.length - 1 && quantity === 0 ) {
                         requestData = 0;
                     }
                 }
@@ -189,7 +187,7 @@ function PopupHandler () {
                 element = jQuery(popupTriggers[i]);
                 popupType = element.attr(attr);
 
-                if ( popupType != undefined && this.getFromPage.indexOf(popupType) === -1 ) {
+                if ( popupType !== undefined && this.getFromPage.indexOf(popupType) === -1 ) {
                     ajaxRequestData.popupRequestData[popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData.popupRequestData[popupType]);
                 } else if ( this.getFromPage.indexOf(popupType) !== -1 ) {
                     this.popupContents[popupType] = {
@@ -218,7 +216,7 @@ function PopupHandler () {
         };
 
         this.injectPopup = function () {
-            if ( jQuery('.' + this.popupClass).length == 0 ) {
+            if ( jQuery('.' + this.popupClass).length === 0 ) {
                 jQuery('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
             }
             this.popup = jQuery('.' + this.popupClass);
@@ -232,7 +230,11 @@ function PopupHandler () {
 
                 $this.showPopup(jQuery(this).attr($this.triggerAttribute));
 
-                jQuery($this.popupCloseSelector).click(function () {
+                if ( typeof $this.popupCloseSelectors === 'string' ) {
+                    $this.popupCloseSelectors = [$this.popupCloseSelectors];
+                }
+
+                jQuery($this.popupCloseSelectors.join(',')).click(function () {
                     $this.hidePopup();
                 });
 
@@ -268,10 +270,10 @@ function PopupHandler () {
                 transition.push("background-color " + this.backgroundTransitionSpeed / 1000 + "s");
             }
             transition = transition.join(',');
-            if ( transition != "" ) {
+            if ( transition !== "" ) {
                 this.popupWrapper.css('transition', transition);
             }
-        }
+        };
 
     } else {
         return new PopupHandler();
