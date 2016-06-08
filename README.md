@@ -40,14 +40,65 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 </p>
 
 <p>
-	Scripts expects response from server as stringified json like 
+	<p>
+		Script sends request to server as object with key set in <ins>ajaxDataObjectName</ins> setting ( default is 'popupRequestData' ) whose value is object of all popupIDs with their additional request data.
+	</p>
+	<p>
+		<ins>popupIDs</ins> are values that were found on the page in all elements with <ins>triggerAttribute</ins> or <ins>deferredTriggerAttribute</ins>
+	</p>
+	<p>
+		<ins>additional request data</ins> are pairs of <ins>additionalDataAttributes</ins> and values of those attributes that were found in elements with <ins>triggerAttribute</ins>.
+		If element has no <ins>additionalDataAttributes</ins>, <ins>additional request data</ins> will be 0 .
+	</p>
+	<p>
+		For example if there are two elements with <ins>triggerAttribute</ins> and <ins>additionalDataAttributes</ins> (data-extra):
+		<pre>&lt;<span>button</span> data-popup="popup_first" data-extra="extra_first" &gt;<span>First</span>&lt;/<span>button</span>&gt;
+&lt;<span>button</span> data-popup="popup_second" data-extra="extra_second" &gt;<span>Second</span>&lt;/<span>button</span>&gt;
+&lt;<span>button</span> data-popup="popup_third"&gt;<span>Third</span>&lt;/<span>button</span>&gt;</pre>
+	</p>
+	<p>
+		Request to server will look like this:
+	</p>
 	<pre>&lcub;
-	"popupID_first" : &lcub;
-		"content" : "&lt;div&gt;content for popupIDfirst&lt;/div&gt;",
+	"popupRequestData":&lcub;
+		"popup_first" : &lcub;
+			"data-extra" : "extra_first"
+		&rcub;,
+		"popup_second" : &lcub;
+			"data-extra" : "extra_second"
+		&rcub;,
+		"popup_third" : 0
+	&rcub;
+&rcub;</pre>
+</p>
+
+<p>
+	<p>
+		If you are working with Wordpress and have specified <ins>ajaxAction</ins>, it will be added to request.
+	</p>
+	<pre>&lcub;
+	"action": "myAjaxHandlingWpFunction",
+	"popupRequestData":&lcub;
+		"popup_first" : &lcub;
+			"data-extra" : "extra_first"
+		&rcub;,
+		"popup_second" : &lcub;
+			"data-extra" : "extra_second"
+		&rcub;,
+		"popup_third" : 0
+	&rcub;
+&rcub;</pre>
+</p>
+
+<p>
+	Script expects response from server as stringified json like 
+	<pre>&lcub;
+	"popup_first" : &lcub;
+		"content" : "&lt;div&gt;content for popup_first&lt;/div&gt;",
 		"formID" : "myFormId"
 	&rcub;,
-	"popupID_second" : &lcub;
-		"content" : "&lt;div&gt;content for popupIdSecond&lt;/div&gt;",
+	"popup_second" : &lcub;
+		"content" : "&lt;div&gt;content for popup_second&lt;/div&gt;",
 		"formID" : "myAnotherFormId"
 	&rcub;
 &rcub;</pre>
@@ -100,25 +151,13 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>contentAttribute</h3>
 		</dt>
 		<dd>
-			<p>Attribute to specify wrapper for content for popup, if this popups ID is in the <ins>getFromPage</ins> array.</p>
+			<p>Attribute to specify wrapper for content for popups.</p>
+			<p>If popup ID is in the <ins>getFromPage</ins> array, content will be taken from <ins>contentAttribute</ins> with same value.</p>
 			<p>For example <ins>data-content</ins>="login" should hold content for popup with ID="login".</p>
 			<h5>Default : "data-content"</h5>
 			<p>Type : string</p>
 			<p>
 				<pre><span>&lt;div data-content="login"&gt;</span>&lt;<span>div&gt;</span>Content for login popup&lt;/<span>div</span>&gt;&lt;/<span>div</span>&gt;</pre>
-			</p>
-		</dd>
-	</li>
-	<li>
-		<dt>
-			<h3>additionalDataAttributes</h3>
-		</dt>
-		<dd>
-			<p>If element with <ins>triggerAttribute</ins> has attribute that contained in <ins>additionalDataAttributes</ins> array, value of additional attribute will be passed to server via ajax as request data.</p>
-			<h5>Default : [ ]</h5>
-			<p>Type : array of strings</p>
-			<p>
-				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age</ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
 			</p>
 		</dd>
 	</li>
@@ -133,6 +172,19 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 		
 			<h5>Default : [ ]</h5>
 			<p>Type : array of strings</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>additionalDataAttributes</h3>
+		</dt>
+		<dd>
+			<p>If element with <ins>triggerAttribute</ins> has attribute that contained in <ins>additionalDataAttributes</ins> array, value of additional attribute will be passed to server via ajax as request data.</p>
+			<h5>Default : [ ]</h5>
+			<p>Type : array of strings</p>
+			<p>
+				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age</ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
+			</p>
 		</dd>
 	</li>
 	<li>
