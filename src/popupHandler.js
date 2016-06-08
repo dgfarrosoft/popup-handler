@@ -23,7 +23,8 @@ function PopupHandler () {
         this.darkBackground = false;
         this.ajaxAction = '';
         this.ajaxDataArrayName = 'popupRequestData';
-        this.popupStyles = 'background-color:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
+        this.customWrapperBackground = '';
+        this.popupStyles = 'background:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
 
         this.init = function ( settings ) {
             if ( settings !== undefined ) {
@@ -107,13 +108,13 @@ function PopupHandler () {
 
                     this.popupWrapper.show();
                     this.centerVertically();
-                    if ( this.customWrapperBackground !== undefined ) {
-                        this.popupWrapper.css('background-color', this.customWrapperBackground);
+                    if ( this.customWrapperBackground !== '' ) {
+                        this.popupWrapper.css('background', this.customWrapperBackground);
                     }
                     else if ( this.darkBackground ) {
-                        this.popupWrapper.css('background-color', "rgba(1, 1, 1, .7)");
+                        this.popupWrapper.css('background', "rgba(1, 1, 1, .7)");
                     } else {
-                        this.popupWrapper.css('background-color', "rgba(207, 207, 207, .6)");
+                        this.popupWrapper.css('background', "rgba(207, 207, 207, .6)");
                     }
                     if ( this.focusOnFirstInput ) {
                         this.popup.find('input').eq(0).focus();
@@ -135,7 +136,7 @@ function PopupHandler () {
 
             this.setPopupStyles();
             if ( !this.popupVisible ) {
-                this.popupWrapper.css('background-color', "transparent");
+                this.popupWrapper.css('background', "transparent");
             }
             this.popupVisible = false;
         };
@@ -269,7 +270,7 @@ function PopupHandler () {
                 transition.push("padding " + this.popupShowSpeed / 1000 + "s");
             }
             if ( this.backgroundTransition ) {
-                transition.push("background-color " + this.backgroundTransitionSpeed / 1000 + "s");
+                transition.push("background " + this.backgroundTransitionSpeed / 1000 + "s");
             }
             transition = transition.join(',');
             if ( transition !== "" ) {
