@@ -261,9 +261,10 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>popupHandlers</h3>
 		</dt>
 		<dd>
-			<p>Object with pairs : <pre>"popupID" : callback()</pre></p>
-			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified popupID.</p>
-			<p>Submit handler ( on form $('form#' + popupID) ) starts to listen for submission only after suitable form appears in popup.</p>
+			<p>Object with pairs : <pre>"formID" : callback()</pre></p>
+			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified formID.</p>
+			<p>Submit handler ( on form $('form#' + formID) ) starts to listen for submission only after suitable form appears in popup.</p>
+			<p>If <ins>popupHandlers</ins> object not contains some popupIDs that you put in <ins>triggerAttribute</ins> of some elements, popup with corresponding content will still appear.</p>
 			<h5>Default : { }</h5>
 			<p>Type : object</p>
 		</dd>
