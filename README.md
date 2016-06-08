@@ -1,5 +1,43 @@
 # Popup Handler
-<h1>Settings: </h1>
+
+<p>
+	Script needs jQuery to work.
+</p>
+
+<p>
+	To start working you need to :
+	<ol>
+		<li>
+			Create object of PopupHandler class.
+			<pre>var popupHandler = new PopupHandler&lpar;&rpar;;</pre>
+		</li>
+		<li>
+			Call <ins>init</ins> method on this object.
+			<pre>var popupHandler = new PopupHandler&lpar;&rpar;;
+popupHandler.init&lpar;&rpar;;</pre>
+		</li>
+	</ol>
+</p>
+
+<p>
+	You should pass settings object into <ins>init</ins> method to achieve proper work of script, like <ins>ajaxUrl</ins> or <ins>contentAttribute</ins>
+	<pre>var settings = &lcub;
+	"contentAttribute" : "data-popup-content"
+	&rcub;;
+var popupHandler = new PopupHandler&lpar;&rpar;;
+popupHandler.init&lpar;settings&rpar;;</pre>
+</p>
+
+<p>
+	If you are working with Wordpress and want to use ajax to get popup content, you should pass both <ins>ajaxUrl</ins> and <ins>ajaxAction</ins>.
+	<pre>var settings = &lcub;
+	"contentAttribute" : "data-popup-content"
+	&rcub;;
+var popupHandler = new PopupHandler&lpar;&rpar;;
+popupHandler.init&lpar;settings&rpar;;</pre>
+</p>
+
+<h2>Settings: </h2>
 <ul>
 	<li>
 		<dt>
@@ -84,7 +122,7 @@
 			<h3>popupCloseSelectors</h3>
 		</dt>
 		<dd>
-			<p>Popup closing trigger selectors.</p>
+			<p>Selectors to trigger popup closing.</p>
 			<h5>Default : '[data-popup-close]'</h5>
 			<p>Type : string | array of strings</p>
 		</dd>
