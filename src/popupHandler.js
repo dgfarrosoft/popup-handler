@@ -1,17 +1,17 @@
 function PopupHandler () {
     if ( this instanceof PopupHandler ) {
         this.triggerAttribute = 'data-popup';
-        this.contentAttribute = 'data-content';
-        this.getFromPage = [];
-        this.popupVisible = false;
-        this.additionalDataAttributes = [];
         this.deferredTriggerAttribute = 'data-deferred-popup';
-        this.disabledFormClass = 'js-disabled';
+        this.contentAttribute = 'data-content';
+        this.additionalDataAttributes = [];
+        this.getFromPage = [];
         this.popupClass = 'b-popup';
         this.popupWrapperClass = this.popupClass + '__wrapper';
         this.popupCloseSelectors = '[data-popup-close]';
-        this.popupContents = {};
+        this.disabledFormClass = 'js-disabled';
         this.popupHandlers = {};
+        this.popupVisible = false;
+        this.popupContents = {};
         this.focusOnFirstInput = true;
         this.closeOnWrapperClick = true;
         this.ajaxUrl = '';
@@ -22,7 +22,7 @@ function PopupHandler () {
         this.backgroundTransitionSpeed = 1000;
         this.darkBackground = false;
         this.ajaxAction = '';
-        this.ajaxDataArrayName = 'popupRequestData';
+        this.ajaxDataObjectName = 'popupRequestData';
         this.customWrapperBackground = '';
         this.popupStyles = 'background:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
 
@@ -43,7 +43,7 @@ function PopupHandler () {
             var newAjaxRequestData = this.getAjaxRequestData();
             var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
             this.ajaxRequestData = newAjaxRequestData;
-            if ( Object.keys(newAjaxRequestData[this.ajaxDataArrayName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
+            if ( Object.keys(newAjaxRequestData[this.ajaxDataObjectName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
                 jQuery.ajax({
                     url: this.ajaxUrl,
                     type: "POST",
@@ -167,7 +167,7 @@ function PopupHandler () {
 
         this.getAjaxRequestData = function () {
             var ajaxRequestData = {};
-            ajaxRequestData[this.ajaxDataArrayName] = {};
+            ajaxRequestData[this.ajaxDataObjectName] = {};
             if ( this.ajaxAction !== '' ) {
                 ajaxRequestData.action = this.ajaxAction;
             }
@@ -191,7 +191,7 @@ function PopupHandler () {
                 popupType = element.attr(attr);
 
                 if ( popupType !== undefined && this.getFromPage.indexOf(popupType) === -1 ) {
-                    ajaxRequestData[this.ajaxDataArrayName][popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataArrayName][popupType]);
+                    ajaxRequestData[this.ajaxDataObjectName][popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataObjectName][popupType]);
                 } else if ( this.getFromPage.indexOf(popupType) !== -1 ) {
                     this.popupContents[popupType] = {
                         popupID: popupType,
