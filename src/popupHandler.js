@@ -53,7 +53,7 @@ function PopupHandler () {
                             response = jQuery.parseJSON(response);
                             for ( var popupType in response ) {
                                 $this.popupContents[popupType] = {
-                                    popupID: response[popupType].popupID,
+                                    popupID: response[popupType].formID,
                                     content: response[popupType].content
                                 };
                                 $this.popupContents[popupType].popupID = $this.popupContents[popupType].popupID === undefined ? popupType : $this.popupContents[popupType].popupID;
