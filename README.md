@@ -62,11 +62,11 @@
 			<h3>additionalDataAttributes</h3>
 		</dt>
 		<dd>
-			<p>If element with <ins>triggerAttribute</ins> has attribute that contained in <ins>additionalDataAttributes</ins> array, value of that attribute will be passed to server via ajax as request data.</p>
+			<p>If element with <ins>triggerAttribute</ins> has attribute that contained in <ins>additionalDataAttributes</ins> array, value of additional attribute will be passed to server via ajax as request data.</p>
 			<h5>Default : [ ]</h5>
 			<p>Type : array of strings</p>
 			<p>
-				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age<ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
+				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age</ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
 			</p>
 		</dd>
 	</li>
@@ -95,7 +95,7 @@
 			<h3>popupCloseSelectors</h3>
 		</dt>
 		<dd>
-			<p>Specifies selectors click on wich popup will be closed.</p>
+			<p>Popup closing trigger selectors.</p>
 			<h5>Default : '[data-popup-close]'</h5>
 			<p>Type : string | array of strings</p>
 		</dd>
@@ -105,7 +105,7 @@
 			<h3>popupHandlers</h3>
 		</dt>
 		<dd>
-			<p>Object with <pre>"popupID" : callback()</pre> pairs.</p>
+			<p>Object with pairs : <pre>"popupID" : callback()</pre></p>
 			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified popupID.</p>
 			<p>Submit handler ( on form $('form#' + popupID) ) starts to listen for submission only after suitable form appears in popup.</p>
 			<h5>Default : { }</h5>
