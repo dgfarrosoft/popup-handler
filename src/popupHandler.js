@@ -21,7 +21,8 @@ function PopupHandler () {
         this.backgroundTransition = true;
         this.backgroundTransitionSpeed = 1000;
         this.darkBackground = false;
-        this.ajaxAction = 'ajaxGetPopupContent';
+        this.ajaxAction = '';
+        this.ajaxDataArrayName = 'popupRequestData';
         this.popupStyles = 'background-color:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
 
         this.init = function ( settings ) {
@@ -41,7 +42,7 @@ function PopupHandler () {
             var newAjaxRequestData = this.getAjaxRequestData();
             var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
             this.ajaxRequestData = newAjaxRequestData;
-            if ( Object.keys(newAjaxRequestData.popupRequestData).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
+            if ( Object.keys(newAjaxRequestData[this.ajaxDataArrayName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
                 jQuery.ajax({
                     url: this.ajaxUrl,
                     type: "POST",
@@ -164,11 +165,11 @@ function PopupHandler () {
         };
 
         this.getAjaxRequestData = function () {
-            var ajaxRequestData = {
-                action: this.ajaxAction,
-                popupRequestData: {}
-            };
-
+            var ajaxRequestData = {};
+            ajaxRequestData[this.ajaxDataArrayName] = {};
+            if ( this.ajaxAction !== '' ) {
+                ajaxRequestData.action = this.ajaxAction;
+            }
             var popupTriggers = jQuery('[' + this.triggerAttribute + ']');
             var deferredPopupTriggers = jQuery('[' + this.deferredTriggerAttribute + ']');
 
@@ -189,7 +190,7 @@ function PopupHandler () {
                 popupType = element.attr(attr);
 
                 if ( popupType !== undefined && this.getFromPage.indexOf(popupType) === -1 ) {
-                    ajaxRequestData.popupRequestData[popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData.popupRequestData[popupType]);
+                    ajaxRequestData[this.ajaxDataArrayName][popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataArrayName][popupType]);
                 } else if ( this.getFromPage.indexOf(popupType) !== -1 ) {
                     this.popupContents[popupType] = {
                         popupID: popupType,
