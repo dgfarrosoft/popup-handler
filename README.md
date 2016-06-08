@@ -22,9 +22,9 @@ popupHandler.init&lpar;&rpar;;</pre>
 
 <p>
 	<div>You should pass object into <ins>init</ins> method to achieve proper work of script.</div>
-	<div>It should contain settings like <ins>ajaxUrl</ins> or <ins>contentAttribute</ins></div>
+	<div>It should contain settings like <ins>ajaxUrl</ins> or <ins>getFromPage</ins></div>
 	<pre>var settings = &lcub;
-	"contentAttribute" : "data-popup-content"
+	"getFromPage" : "login"
 	&rcub;;
 var popupHandler = new PopupHandler&lpar;&rpar;;
 popupHandler.init&lpar;settings&rpar;;</pre>
