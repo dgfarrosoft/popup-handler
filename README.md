@@ -62,7 +62,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 </p>
 
 <p>
-	If there is a form in popup content that needs submission <ins>popupID</ins> should be same, as in <ins>popupHandlers</ins> object( or <ins>formID</ins>, if provided ).
+	If there is a form in popup content that needs submission, <ins>popupID</ins> should be same, as in <ins>popupHandlers</ins> object( or <ins>formID</ins>, if provided ).
 </p>
 
 <h2>Settings: </h2>
