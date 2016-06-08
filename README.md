@@ -20,7 +20,8 @@ popupHandler.init&lpar;&rpar;;</pre>
 </p>
 
 <p>
-	You should pass settings object into <ins>init</ins> method to achieve proper work of script, like <ins>ajaxUrl</ins> or <ins>contentAttribute</ins>
+	<div>You should pass object into <ins>init</ins> method to achieve proper work of script.</div>
+	<div>It should contain settings like <ins>ajaxUrl</ins> or <ins>contentAttribute</ins></div>
 	<pre>var settings = &lcub;
 	"contentAttribute" : "data-popup-content"
 	&rcub;;
@@ -35,6 +36,28 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 	&rcub;;
 var popupHandler = new PopupHandler&lpar;&rpar;;
 popupHandler.init&lpar;settings&rpar;;</pre>
+</p>
+
+<p>
+	Scripts expects response from server as stringified json like 
+	<pre>&lcub;
+	"popupIdfirst" : &lcub;
+		"content" : "&lt;div&gt;content for popupIDfirst&lt;/div&gt;",
+		"formID" : "myFormId"
+	&rcub;,
+	"popupIdSecond" : &lcub;
+		"content" : "&lt;div&gt;content for popupIdSecond&lt;/div&gt;",
+		"formID" : "myAnotherFormId"
+	&rcub;
+&rcub;</pre>
+</p>
+
+<p>
+	Field <ins>formID</ins> will be used in handler to listen for form submition with <ins>id</ins> that matches recieved <ins>formID</ins> if such form will appear in popup.
+</p>
+
+<p>
+	If <ins>formID</ins> field is not provided, script will use recieved <ins>popupID</ins> instead.
 </p>
 
 <h2>Settings: </h2>
