@@ -1,9 +1,10 @@
 # Popup Handler
 
+<h5>Small JavaScript plugin that handles popups.</h5>
 <p>
-	Script needs jQuery to work.
+	jQuery is required.
 </p>
-
+<h2>Initialization</h2>
 <p>
 	To start working you need to :
 	<ol>
@@ -38,7 +39,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 var popupHandler = new PopupHandler&lpar;&rpar;;
 popupHandler.init&lpar;settings&rpar;;</pre>
 </p>
-
+<h2>Functionality</h2>
 <p>
 	<p>
 		Script sends request to server as object with key set in <ins>ajaxDataObjectName</ins> setting ( default is 'popupRequestData' ) whose value is object of all popupIDs with their additional request data.
