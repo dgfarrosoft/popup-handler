@@ -13,7 +13,6 @@
 			<p>
 				<pre>&lt;<span>button</span> data-popup="login"&gt;<span>Sign in</span>&lt;/<span>button</span>&gt;</pre>
 			</p>
-			
 		</dd>
 	</li>
 	<li>
@@ -30,20 +29,7 @@
 			</p>
 		</dd>
 	</li>
-	<li>
-		<dt>
-			<h3>getFromPage</h3>
-		</dt>
-		<dd>
-			<p>Array of popup IDs that you want to fill from loaded page.</p>
-			<p>If popup ID is in this array, ajax would not try to get content for this popup from server. Popup will be filled with content taken from element with <ins>contentAttribute</ins> with this popup ID as value.</p>
-			<p>For example <ins>data-content</ins>="login" should hold content for popup with ID="login".</p>
-		
-			<h5>Default : [ ]</h5>
-			<p>Type : array of strings</p>
-		</dd>
-	</li>
-	<li>
+		<li>
 		<dt>
 			<h3>contentAttribute</h3>
 		</dt>
@@ -72,12 +58,15 @@
 	</li>
 	<li>
 		<dt>
-			<h3>disabledFormClass</h3>
+			<h3>getFromPage</h3>
 		</dt>
 		<dd>
-			<p>Class, that will be added to form on its submitting.</p>
-			<h5>Default : 'js-disabled'</h5>
-			<p>Type : string</p>
+			<p>Array of popup IDs that you want to fill from loaded page.</p>
+			<p>If popup ID is in this array, ajax would not try to get content for this popup from server. Popup will be filled with content taken from element with <ins>contentAttribute</ins> with this popup ID as value.</p>
+			<p>For example <ins>data-content</ins>="login" should hold content for popup with ID="login".</p>
+		
+			<h5>Default : [ ]</h5>
+			<p>Type : array of strings</p>
 		</dd>
 	</li>
 	<li>
@@ -102,24 +91,12 @@
 	</li>
 	<li>
 		<dt>
-			<h3>popupHandlers</h3>
+			<h3>disabledFormClass</h3>
 		</dt>
 		<dd>
-			<p>Object with pairs : <pre>"popupID" : callback()</pre></p>
-			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified popupID.</p>
-			<p>Submit handler ( on form $('form#' + popupID) ) starts to listen for submission only after suitable form appears in popup.</p>
-			<h5>Default : { }</h5>
-			<p>Type : object</p>
-		</dd>
-	</li>
-	<li>
-		<dt>
-			<h3>focusOnFirstInput</h3>
-		</dt>
-		<dd>
-			<p>Whether form in input has focus on its first input or not.</p>
-			<h5>Default : true</h5>
-			<p>Type : boolean</p>
+			<p>Class, that will be added to form on its submitting.</p>
+			<h5>Default : 'js-disabled'</h5>
+			<p>Type : string</p>
 		</dd>
 	</li>
 	<li>
@@ -130,16 +107,6 @@
 			<p>Whether popup closes on wrapper click or not.</p>
 			<h5>Default : true</h5>
 			<p>Type : boolean</p>
-		</dd>
-	</li>
-	<li>
-		<dt>
-			<h3>ajaxUrl</h3>
-		</dt>
-		<dd>
-			<p>Specifies url for ajax requests.</p>
-			<h5>Default : ''</h5>
-			<p>Type : string</p>
 		</dd>
 	</li>
 	<li>
@@ -200,13 +167,63 @@
 			<p>Specifies background color for popup wrapper.</p>
 			<p><ins>darkBackground</ins> popoperty will be ignored if <ins>customWrapperBackground</ins> is different than ''.</p>
 			<h5>Default : ''</h5>
-			<p>Type : string with suitable for css <pre>background</pre> property</p>
+			<p>Type : string with suitable for css <i>background</i> property</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>focusOnFirstInput</h3>
+		</dt>
+		<dd>
+			<p>Whether form in popup has focus on its first input or not.</p>
+			<h5>Default : true</h5>
+			<p>Type : boolean</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>ajaxUrl</h3>
+		</dt>
+		<dd>
+			<p>Specifies url for ajax requests.</p>
+			<h5>Default : ''</h5>
+			<p>Type : string</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>popupHandlers</h3>
+		</dt>
+		<dd>
+			<p>Object with pairs : <pre>"popupID" : callback()</pre></p>
+			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified popupID.</p>
+			<p>Submit handler ( on form $('form#' + popupID) ) starts to listen for submission only after suitable form appears in popup.</p>
+			<h5>Default : { }</h5>
+			<p>Type : object</p>
 		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>ajaxAction</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Specifies action field in ajax request object.</p>
+			<p>Can be used for WordPress ajax requests.</p>
+			<h5>Default : ''</h5>
+			<p>Type : string</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>ajaxDataObjectName</h3>
+		</dt>
+		<dd>
+			<p>Specifies field name for object with request data for all popups.</p>
+			<p>Can be used on server to recieve data from client: 
+				<pre>$_POST&lsqb;'popupRequestData'&rsqb;</pre>
+			</p>
+			<h5>Default : 'popupRequestData'</h5>
+			<p>Type : string</p>
+		</dd>
 	</li>
 </ul>
