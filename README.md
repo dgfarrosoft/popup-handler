@@ -32,7 +32,8 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 <p>
 	If you are working with Wordpress and want to use ajax to get popup content, you should pass both <ins>ajaxUrl</ins> and <ins>ajaxAction</ins>.
 	<pre>var settings = &lcub;
-	"contentAttribute" : "data-popup-content"
+	"ajaxUrl" : my_localized_object.admin_ajax_url,
+	"ajaxAction" : "myAjaxHandlingWpFunction"
 	&rcub;;
 var popupHandler = new PopupHandler&lpar;&rpar;;
 popupHandler.init&lpar;settings&rpar;;</pre>
@@ -41,11 +42,11 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 <p>
 	Scripts expects response from server as stringified json like 
 	<pre>&lcub;
-	"popupIdfirst" : &lcub;
+	"popupID_first" : &lcub;
 		"content" : "&lt;div&gt;content for popupIDfirst&lt;/div&gt;",
 		"formID" : "myFormId"
 	&rcub;,
-	"popupIdSecond" : &lcub;
+	"popupID_second" : &lcub;
 		"content" : "&lt;div&gt;content for popupIdSecond&lt;/div&gt;",
 		"formID" : "myAnotherFormId"
 	&rcub;
@@ -58,6 +59,10 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 
 <p>
 	If <ins>formID</ins> field is not provided, script will use recieved <ins>popupID</ins> instead.
+</p>
+
+<p>
+	<ins>popupID</ins> should be same, as in <ins>popupHandlers</ins> object.
 </p>
 
 <h2>Settings: </h2>
