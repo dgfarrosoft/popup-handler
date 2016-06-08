@@ -66,7 +66,7 @@
 			<h5>Default : [ ]</h5>
 			<p>Type : array of strings</p>
 			<p>
-				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age</ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
+				<pre>&lt;<span>button</span> data-popup="register" <ins>data-age<ins>="21"&gt;<span>Sign up</span>&lt;/<span>button</span>&gt;</pre>
 			</p>
 		</dd>
 	</li>
@@ -76,100 +76,136 @@
 		</dt>
 		<dd>
 			<p>Class, that will be added to form on its submitting.</p>
-			<p>
-				<pre>&lt;<span class="pl-ent">template</span> <span class="pl-e">is</span>=<span class="pl-s"><span class="pl-pds">"</span>juicy-html<span class="pl-pds">"</span></span> <span class="pl-e">content</span>=<span class="pl-s"><span class="pl-pds">"</span>./path/to/file.html<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">template</span>&gt;</pre>
-			</p>
-			<h5>Default : [ ]</h5>
-			<p>Type : array of strings</p>
+			<h5>Default : 'js-disabled'</h5>
+			<p>Type : string</p>
 		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>popupClass</h3>
 		</dt>
-		<dd></dd>
-	</li>
-	<li>
-		<dt>
-			<h3>popupWrapperClass</h3>
-		</dt>
-		<dd></dd>
+		<dd>
+			<p>Class, that will be added to popup.</p>
+			<h5>Default : 'b-popup'</h5>
+			<p>Type : string</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>popupCloseSelectors</h3>
 		</dt>
-		<dd></dd>
-	</li>
-	<li>
-		<dt>
-			<h3>popupContents</h3>
-		</dt>
-		<dd></dd>
+		<dd>
+			<p>Specifies selectors click on wich popup will be closed.</p>
+			<h5>Default : '[data-popup-close]'</h5>
+			<p>Type : string | array of strings</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>popupHandlers</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Object with <pre>"popupID" : callback()</pre> pairs.</p>
+			<p>Callback function will be called after submission of form with <ins>id</ins> wich matches specified popupID.</p>
+			<p>Submit handler ( on form $('form#' + popupID) ) starts to listen for submission only after suitable form appears in popup.</p>
+			<h5>Default : { }</h5>
+			<p>Type : object</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>focusOnFirstInput</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Whether form in input has focus on its first input or not.</p>
+			<h5>Default : true</h5>
+			<p>Type : boolean</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>closeOnWrapperClick</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Whether popup closes on wrapper click or not.</p>
+			<h5>Default : true</h5>
+			<p>Type : boolean</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>ajaxUrl</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Specifies url for ajax requests.</p>
+			<h5>Default : ''</h5>
+			<p>Type : string</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>animatedShow</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Whether popup appears on screen smoothly or instantly.</p>
+			<h5>Default : true</h5>
+			<p>Type : boolean</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>popupShowSpeed</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Specifies speed for popup to appear on screen.</p>
+			<h5>Default : 200</h5>
+			<p>Type : int (ms)</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>backgroundTransition</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Whether popup wrapper changes its background color smoothly or instantly.</p>
+			<h5>Default : true</h5>
+			<p>Type : boolean</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>backgroundTransitionSpeed</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Specifies speed for popup wrapper to change its background color.</p>
+			<h5>Default : 200</h5>
+			<p>Type : int (ms)</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>darkBackground</h3>
 		</dt>
-		<dd></dd>
+		<dd>
+			<p>Whether popup wrapper has dark background color or light.</p>
+			<h5>Default : false</h5>
+			<p>Type : boolean</p>
+		</dd>
+	</li>
+	<li>
+		<dt>
+			<h3>customWrapperBackground</h3>
+		</dt>
+		<dd>
+			<p>Specifies background color for popup wrapper.</p>
+			<p><ins>darkBackground</ins> popoperty will be ignored if <ins>customWrapperBackground</ins> is different than ''.</p>
+			<h5>Default : ''</h5>
+			<p>Type : string with suitable for css <pre>background</pre> property</p>
+		</dd>
 	</li>
 	<li>
 		<dt>
 			<h3>ajaxAction</h3>
-		</dt>
-		<dd></dd>
-	</li>
-	<li>
-		<dt>
-			<h3>popupStyles</h3>
 		</dt>
 		<dd></dd>
 	</li>
