@@ -54,7 +54,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 		If element has no <ins>additionalDataAttributes</ins>, <ins>additional request data</ins> will be 0 .
 	</p>
 	<p>
-		For example if there are two elements with <ins>triggerAttribute</ins> and <ins>additionalDataAttributes</ins> (data-extra):
+		For example if there are three elements with <ins>triggerAttribute</ins> and <ins>additionalDataAttributes</ins> (data-extra):
 		<pre>&lt;<span>button</span> data-popup="popup_first" data-extra="extra_first" &gt;<span>First</span>&lt;/<span>button</span>&gt;
 &lt;<span>button</span> data-popup="popup_second" data-extra="extra_second" &gt;<span>Second</span>&lt;/<span>button</span>&gt;
 &lt;<span>button</span> data-popup="popup_third"&gt;<span>Third</span>&lt;/<span>button</span>&gt;</pre>
@@ -255,7 +255,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>backgroundTransition</h3>
 		</dt>
 		<dd>
-			<p>Whether popup wrapper changes its background color smoothly or instantly.</p>
+			<p>Whether popup wrapper changes its background smoothly or instantly.</p>
 			<h5>Default : true</h5>
 			<p>Type : boolean</p>
 		</dd>
@@ -265,7 +265,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>backgroundTransitionSpeed</h3>
 		</dt>
 		<dd>
-			<p>Specifies speed for popup wrapper to change its background color.</p>
+			<p>Specifies speed for popup wrapper to change its background.</p>
 			<h5>Default : 200</h5>
 			<p>Type : int (ms)</p>
 		</dd>
@@ -275,7 +275,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>darkBackground</h3>
 		</dt>
 		<dd>
-			<p>Whether popup wrapper has dark background color or light.</p>
+			<p>Whether popup wrapper has dark background or light.</p>
 			<h5>Default : false</h5>
 			<p>Type : boolean</p>
 		</dd>
@@ -285,7 +285,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 			<h3>customWrapperBackground</h3>
 		</dt>
 		<dd>
-			<p>Specifies background color for popup wrapper.</p>
+			<p>Specifies background for popup wrapper.</p>
 			<p><ins>darkBackground</ins> popoperty will be ignored if <ins>customWrapperBackground</ins> is different than ' '.</p>
 			<h5>Default : ' '</h5>
 			<p>Type : string with suitable for css <i>background</i> property</p>
