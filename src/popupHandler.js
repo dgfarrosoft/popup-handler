@@ -54,6 +54,7 @@ function PopupHandler () {
                                     popupID: response[popupType].popupID,
                                     content: response[popupType].content
                                 };
+                                $this.popupContents[popupType].popupID = $this.popupContents[popupType].popupID === undefined ? popupType : $this.popupContents[popupType].popupID;
                             }
 
                         } else {
@@ -71,7 +72,7 @@ function PopupHandler () {
             var $this = this;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
-            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] === "function" ) {
+            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] === "function" && jQuery('form#' + this.popupContents[popupType].popupID).length !== 0 ) {
                 jQuery('form#' + this.popupContents[popupType].popupID).submit(function ( event ) {
                     event.preventDefault();
                     var currentForm = jQuery(this);
