@@ -62,7 +62,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 </p>
 
 <p>
-	<ins>popupID</ins> should be same, as in <ins>popupHandlers</ins> object.
+	If there is a form in popup content that needs submission <ins>popupID</ins> should be same, as in <ins>popupHandlers</ins> object( or <ins>formID</ins>, if provided ).
 </p>
 
 <h2>Settings: </h2>
@@ -231,8 +231,8 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 		</dt>
 		<dd>
 			<p>Specifies background color for popup wrapper.</p>
-			<p><ins>darkBackground</ins> popoperty will be ignored if <ins>customWrapperBackground</ins> is different than ''.</p>
-			<h5>Default : ''</h5>
+			<p><ins>darkBackground</ins> popoperty will be ignored if <ins>customWrapperBackground</ins> is different than ' '.</p>
+			<h5>Default : ' '</h5>
 			<p>Type : string with suitable for css <i>background</i> property</p>
 		</dd>
 	</li>
@@ -252,7 +252,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 		</dt>
 		<dd>
 			<p>Specifies url for ajax requests.</p>
-			<h5>Default : ''</h5>
+			<h5>Default : ' '</h5>
 			<p>Type : string</p>
 		</dd>
 	</li>
@@ -276,7 +276,7 @@ popupHandler.init&lpar;settings&rpar;;</pre>
 		<dd>
 			<p>Specifies action field in ajax request object.</p>
 			<p>Can be used for WordPress ajax requests.</p>
-			<h5>Default : ''</h5>
+			<h5>Default : ' '</h5>
 			<p>Type : string</p>
 		</dd>
 	</li>
