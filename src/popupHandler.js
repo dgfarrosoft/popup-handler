@@ -7,7 +7,8 @@ function PopupHandler () {
         this.getFromPage = [];
         this.popupClass = 'b-popup';
         this.popupWrapperClass = this.popupClass + '__wrapper';
-        this.popupCloseSelectors = '[data-popup-close]';
+        this.popupCloseButtonClass = this.popupClass + '__close-btn';
+        this.popupCloseSelectors = ['[data-popup-close]', '.' + this.popupCloseButtonClass];
         this.disabledFormClass = 'js-disabled';
         this.popupHandlers = {};
         this.popupVisible = false;
@@ -24,7 +25,17 @@ function PopupHandler () {
         this.ajaxAction = '';
         this.ajaxDataObjectName = 'popupRequestData';
         this.customWrapperBackground = '';
+        this.closeButtonSize = '40px';
+        this.closeButtonColor = "#000";
         this.popupStyles = 'background:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
+        this.popupCloseImage = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 371.23 371.23" style="enable-background:new 0 0 371.23 371.23;" xml:space="preserve"><polygon points="371.23,21.213 350.018,0 185.615,164.402 21.213,0 0,21.213 164.402,185.615 0,350.018 21.213,371.23 185.615,206.828 350.018,371.23 371.23,350.018 206.828,185.615 "/><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>';
+        this.popupCloseBtnStyles =
+            'width: ' + this.closeButtonSize + ';' +
+            'height: ' + this.closeButtonSize + ';' +
+            'position: absolute;' +
+            'right: 2%;' +
+            'top: 2%;' +
+            'cursor: pointer;';
 
         this.init = function ( settings ) {
             if ( settings !== undefined ) {
@@ -34,6 +45,7 @@ function PopupHandler () {
             }
             this.getPopupsContent();
             this.injectPopup();
+            this.popupCloseBtn = $('.' + this.popupCloseButtonClass);
             this.setPopupStyles();
             this.initEventListeners();
         };
@@ -219,8 +231,9 @@ function PopupHandler () {
         };
 
         this.injectPopup = function () {
+            var popupCloseBtn = '<div class = "' + this.popupCloseButtonClass + '">' + this.popupCloseImage + '</div>';
             if ( jQuery('.' + this.popupClass).length === 0 ) {
-                jQuery('body').append('<div class = "' + this.popupWrapperClass + '"><div class = "' + this.popupClass + '__close-btn"></div><div class = "' + this.popupClass + '"></div></div>');
+                jQuery('body').append('<div class = "' + this.popupWrapperClass + '">' + popupCloseBtn + '<div class = "' + this.popupClass + '"></div></div>');
             }
             this.popup = jQuery('.' + this.popupClass);
             this.popupWrapper = this.popup.closest('.' + this.popupWrapperClass);
@@ -265,6 +278,8 @@ function PopupHandler () {
             var transition = [];
 
             this.popupWrapper.attr('style', this.popupStyles);
+            this.popupCloseBtn.attr('style', this.popupCloseBtnStyles);
+            this.popupCloseBtn.css('fill', this.closeButtonColor);
 
             if ( this.animatedShow ) {
                 transition.push("padding " + this.popupShowSpeed / 1000 + "s");

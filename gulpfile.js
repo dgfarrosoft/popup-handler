@@ -24,9 +24,7 @@ var $ = require('gulp-load-plugins')(),
 // Paths To Resources
 //------------------------------------------
 var paths = {
-    javascriptFilesPath: [
-        './src/*.js'
-    ]
+    javascriptFilesPath: './src/*.js'
 };
 
 // destinations for resources npm install --save critical
@@ -87,7 +85,7 @@ gulp.task('watch', ['clean'], function ( cb ) {
     gulp.start('scripts:concat');
 
     // Generate js list(add or remove file)
-    watch([paths.javascriptFilesPath + '/*.js'], function ( events ) {
+    watch([paths.javascriptFilesPath, './js/*.js'], function ( events ) {
         if ( 'add' === events.event || 'unlink' === events.event || 'change' === events.event ) {
             return runSequence(
                 'scripts:concat'
