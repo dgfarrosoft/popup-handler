@@ -1,6 +1,8 @@
 function PopupHandler () {
     if ( this instanceof PopupHandler ) {
         this.triggerAttribute = 'data-popup';
+        this.allElementsAtOnce = false;
+        this.hashAttribute = 'data-hash';
         this.deferredTriggerAttribute = 'data-deferred-popup';
         this.contentAttribute = 'data-content';
         this.additionalDataAttributes = [];
@@ -43,41 +45,83 @@ function PopupHandler () {
                     this[setting] = settings[setting];
                 }
             }
-            this.getPopupsContent();
+            this.getPopupsContent(this.allElementsAtOnce);
             this.injectPopup();
-            this.popupCloseBtn = $('.' + this.popupCloseButtonClass);
+            this.popupCloseBtn = jQuery('.' + this.popupCloseButtonClass);
             this.setPopupStyles();
-            this.initEventListeners();
+            this.initEventListeners(this.allElementsAtOnce);
         };
 
         this.getPopupsContent = function () {
             var $this = this;
-            var newAjaxRequestData = this.getAjaxRequestData();
-            var isRequestsSame = this.isEqual(newAjaxRequestData, this.ajaxRequestData);
-            this.ajaxRequestData = newAjaxRequestData;
-            if ( Object.keys(newAjaxRequestData[this.ajaxDataObjectName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
-                jQuery.ajax({
-                    url: this.ajaxUrl,
-                    type: "POST",
-                    data: newAjaxRequestData,
-                    success: function ( response ) {
-                        if ( response !== "no content" ) {
-                            response = jQuery.parseJSON(response);
-                            for ( var popupType in response ) {
-                                $this.popupContents[popupType] = {
-                                    popupID: response[popupType].formID,
-                                    content: response[popupType].content
-                                };
-                                $this.popupContents[popupType].popupID = $this.popupContents[popupType].popupID === undefined ? popupType : $this.popupContents[popupType].popupID;
-                            }
+            var ajaxRequestData = this.getAjaxRequestData(this.allElementsAtOnce);
+            if ( this.allElementsAtOnce ) {
+                var isRequestsSame = this.isEqual(ajaxRequestData, this.ajaxRequestData);
+                this.ajaxRequestData = ajaxRequestData;
+                if ( Object.keys(ajaxRequestData[this.ajaxDataObjectName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
+                    jQuery.ajax({
+                        url: $this.ajaxUrl,
+                        type: "POST",
+                        data: ajaxRequestData,
+                        success: function ( response ) {
+                            if ( response !== "no content" ) {
+                                response = jQuery.parseJSON(response);
+                                for ( var popupType in response ) {
+                                    $this.popupContents[popupType] = {
+                                        popupID: response[popupType].formID,
+                                        content: response[popupType].content
+                                    };
+                                    $this.popupContents[popupType].popupID = $this.popupContents[popupType].popupID === undefined ? popupType : $this.popupContents[popupType].popupID;
+                                }
 
-                        } else {
+                            } else {
+                                console.log(response);
+                            }
+                        },
+                        error: function ( response ) {
                             console.log(response);
                         }
-                    },
-                    error: function ( response ) {
-                        console.log(response);
+                    });
+                }
+            } else {
+                var popupID;
+                var content;
+                var popupCode;
+                var triggerElement;
+                $.each(ajaxRequestData[this.ajaxDataObjectName], function ( index, popupRequestData ) {
+                    triggerElement = popupRequestData.element;
+                    var data = $this.ajaxAction != '' ? {'action': $this.ajaxAction} : {};
+                    data[$this.ajaxDataObjectName] = {};
+
+                    data[$this.ajaxDataObjectName].popupID = popupRequestData.popupID;
+                    data[$this.ajaxDataObjectName].request = popupRequestData.request;
+                    popupCode = btoa(JSON.stringify(data));
+                    if ( $this.popupContents[popupCode] === undefined ) {
+                        jQuery.ajax({
+                            url: $this.ajaxUrl,
+                            type: "POST",
+                            data: data,
+                            success: function ( response ) {
+                                if ( response !== "no content" ) {
+                                    response = JSON.parse(response);
+                                    popupID = response.formID !== undefined ? response.formID : data[$this.ajaxDataObjectName].popupID;
+                                    content = response.content !== undefined ? response.content : '';
+                                    popupCode = btoa(JSON.stringify(data));
+                                    $this.popupContents[popupCode] = {
+                                        popupID: popupID,
+                                        content: content,
+                                        element: triggerElement
+                                    };
+                                } else {
+                                    console.log(response);
+                                }
+                            },
+                            error: function ( response ) {
+                                console.log(response);
+                            }
+                        });
                     }
+                    triggerElement.attr('data-hash', popupCode);
                 });
             }
         };
@@ -103,14 +147,17 @@ function PopupHandler () {
         };
 
         this.showPopup = function ( popupType, defer ) {
+            defer = defer === undefined ? false : defer;
+            var attr;
             if ( typeof popupType !== 'string' ) {
-                defer = defer === undefined ? false : defer;
-                var attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
+                attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
                 popupType = popupType.attr(attr);
+            }
+            if ( this.allElementsAtOnce ) {
+                popupType = popupType.attr(this.hashAttribute);
             }
 
             this.hidePopup(true);
-
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].popupID !== "" ) {
                     this.fillPopup(popupType);
@@ -179,7 +226,7 @@ function PopupHandler () {
 
         this.getAjaxRequestData = function () {
             var ajaxRequestData = {};
-            ajaxRequestData[this.ajaxDataObjectName] = {};
+            ajaxRequestData[this.ajaxDataObjectName] = this.allElementsAtOnce ? {} : [];
             if ( this.ajaxAction !== '' ) {
                 ajaxRequestData.action = this.ajaxAction;
             }
@@ -203,7 +250,15 @@ function PopupHandler () {
                 popupType = element.attr(attr);
 
                 if ( popupType !== undefined && this.getFromPage.indexOf(popupType) === -1 ) {
-                    ajaxRequestData[this.ajaxDataObjectName][popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataObjectName][popupType]);
+                    if ( this.allElementsAtOnce ) {
+                        ajaxRequestData[this.ajaxDataObjectName][popupType] = this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataObjectName][popupType]);
+                    } else {
+                        ajaxRequestData[this.ajaxDataObjectName].push({
+                            "popupID": popupType,
+                            "element": element,
+                            "request": this.getSingleAjaxRequestData(element, ajaxRequestData[this.ajaxDataObjectName][popupType])
+                        });
+                    }
                 } else if ( this.getFromPage.indexOf(popupType) !== -1 ) {
                     this.popupContents[popupType] = {
                         popupID: popupType,
@@ -241,10 +296,13 @@ function PopupHandler () {
 
         this.initEventListeners = function () {
             var $this = this;
+            var attr;
             jQuery(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
                 event.preventDefault();
 
-                $this.showPopup(jQuery(this).attr($this.triggerAttribute));
+                attr = $this.allElementsAtOnce ? $this.triggerAttribute : 'data-hash';
+
+                $this.showPopup(jQuery(this).attr(attr));
 
                 if ( typeof $this.popupCloseSelectors === 'string' ) {
                     $this.popupCloseSelectors = [$this.popupCloseSelectors];
