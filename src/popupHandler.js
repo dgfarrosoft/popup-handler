@@ -128,15 +128,16 @@ function PopupHandler () {
 
         this.fillPopup = function ( popupType ) {
             var $this = this;
+            var formID = this.popupContents[popupType].popupID;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
-            if ( this.popupHandlers[popupType] !== undefined && typeof this.popupHandlers[popupType] === "function" && jQuery('form#' + this.popupContents[popupType].popupID).length !== 0 ) {
+            if ( this.popupHandlers[formID] !== undefined && typeof this.popupHandlers[formID] === "function" && jQuery('form#' + this.popupContents[popupType].popupID).length !== 0 ) {
                 jQuery('form#' + this.popupContents[popupType].popupID).submit(function ( event ) {
                     event.preventDefault();
                     var currentForm = jQuery(this);
 
                     if ( !currentForm.hasClass($this.disabledFormClass) ) {
-                        $this.formSubmission($this, popupType, currentForm);
+                        $this.formSubmission($this, formID, currentForm);
                     }
                 });
             }
