@@ -166,6 +166,8 @@ function PopupHandler () {
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].popupID !== "" ) {
                     this.fillPopup(popupType);
+                    this.setPopupStyles();
+
                     this.popupVisible = true;
 
                     jQuery(document).trigger('popup-show', [this.popup]);
@@ -200,7 +202,6 @@ function PopupHandler () {
             this.popup.html('');
 
             jQuery('body').css('overflow', 'visible');
-            this.setPopupStyles();
             if ( !this.popupVisible ) {
                 this.popupWrapper.css('background', "transparent");
             }
