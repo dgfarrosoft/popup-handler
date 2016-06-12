@@ -302,7 +302,7 @@ function PopupHandler () {
                 var selectors;
                 for ( var trigger in this.triggerSelectors ) {
                     selectors = this.triggerSelectors[trigger].join(',');
-                    $(selectors).attr(this.triggerAttribute, trigger);
+                    jQuery(selectors).attr(this.triggerAttribute, trigger);
                 }
             }
         };
@@ -310,13 +310,6 @@ function PopupHandler () {
         this.initEventListeners = function () {
             var $this = this;
             var attr;
-            //if ( this.triggerSelectors !== undefined ) {
-            //    var selectors;
-            //    for ( var trigger in this.triggerSelectors ) {
-            //        selectors = this.triggerSelectors[trigger].join(',');
-            //        $(document).on('click', selectors, this.popupTriggerCallback(trigger));
-            //    }
-            //}
             jQuery(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
                 event.preventDefault();
 
