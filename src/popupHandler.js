@@ -29,7 +29,8 @@ function PopupHandler () {
         this.customWrapperBackground = '';
         this.closeButtonSize = '40px';
         this.closeButtonColor = "#000";
-        this.popupStyles = 'background:transparent;text-align:center;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
+        this.popupStyles = 'max-width: 400px;margin: 0 auto;background: white;padding: 30px;border-radius: 3px;'
+        this.popupWrapperStyles = 'background:transparent;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
         this.popupCloseImage = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 371.23 371.23" style="enable-background:new 0 0 371.23 371.23;" xml:space="preserve"><polygon points="371.23,21.213 350.018,0 185.615,164.402 21.213,0 0,21.213 164.402,185.615 0,350.018 21.213,371.23 185.615,206.828 350.018,371.23 371.23,350.018 206.828,185.615 "/><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>';
         this.popupCloseBtnStyles =
             'width: ' + this.closeButtonSize + ';' +
@@ -103,6 +104,7 @@ function PopupHandler () {
                             type: "POST",
                             data: data,
                             success: function ( response ) {
+                                console.log(response);
                                 if ( response !== "no content" ) {
                                     response = JSON.parse(response);
                                     popupID = response.formID !== undefined ? response.formID : data[$this.ajaxDataObjectName].popupID;
@@ -159,14 +161,14 @@ function PopupHandler () {
                 popupType = popupType.attr(this.hashAttribute);
             }
 
-            this.hidePopup(true);
+            this.hidePopup();
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].popupID !== "" ) {
                     this.fillPopup(popupType);
                     this.popupVisible = true;
 
                     jQuery(document).trigger('popup-show', [this.popup]);
-
+                    jQuery('body').css('overflow','hidden');
                     this.popupWrapper.show();
                     this.centerVertically();
                     if ( this.customWrapperBackground !== '' ) {
@@ -196,6 +198,7 @@ function PopupHandler () {
             this.popupWrapper.hide();
             this.popup.html('');
 
+            jQuery('body').css('overflow','visible');
             this.setPopupStyles();
             if ( !this.popupVisible ) {
                 this.popupWrapper.css('background', "transparent");
@@ -355,7 +358,8 @@ function PopupHandler () {
         this.setPopupStyles = function () {
             var transition = [];
 
-            this.popupWrapper.attr('style', this.popupStyles);
+            this.popupWrapper.attr('style', this.popupWrapperStyles);
+            this.popup.attr('style', this.popupStyles);
             this.popupCloseBtn.attr('style', this.popupCloseBtnStyles);
             this.popupCloseBtn.css('fill', this.closeButtonColor);
 
