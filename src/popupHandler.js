@@ -22,8 +22,8 @@ function PopupHandler () {
         this.animatedShow = true;
         this.popupShowSpeed = 200;
         this.backgroundTransition = true;
-        this.backgroundTransitionSpeed = 1000;
-        this.darkBackground = false;
+        this.backgroundTransitionSpeed = 500;
+        this.darkBackground = true;
         this.ajaxAction = '';
         this.ajaxDataObjectName = 'popupRequestData';
         this.customWrapperBackground = '';
@@ -104,7 +104,6 @@ function PopupHandler () {
                             type: "POST",
                             data: data,
                             success: function ( response ) {
-                                console.log(response);
                                 if ( response !== "no content" ) {
                                     response = JSON.parse(response);
                                     popupID = response.formID !== undefined ? response.formID : data[$this.ajaxDataObjectName].popupID;
@@ -134,15 +133,17 @@ function PopupHandler () {
             var formID = this.popupContents[popupType].popupID;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
-            if ( this.popupHandlers[formID] !== undefined && typeof this.popupHandlers[formID] === "function" && jQuery('form#' + this.popupContents[popupType].popupID).length !== 0 ) {
-                jQuery('form#' + this.popupContents[popupType].popupID).submit(function ( event ) {
-                    event.preventDefault();
-                    var currentForm = jQuery(this);
+            if ( this.handleAllForms === undefined ) {
+                if ( this.popupHandlers[formID] !== undefined && typeof this.popupHandlers[formID] === "function" && jQuery('form#' + this.popupContents[popupType].popupID).length !== 0 ) {
+                    jQuery('form#' + this.popupContents[popupType].popupID).submit(function ( event ) {
+                        event.preventDefault();
+                        var currentForm = jQuery(this);
 
-                    if ( !currentForm.hasClass($this.disabledFormClass) ) {
-                        $this.formSubmission($this, formID, currentForm);
-                    }
-                });
+                        if ( !currentForm.hasClass($this.disabledFormClass) ) {
+                            $this.formSubmission($this, formID, currentForm);
+                        }
+                    });
+                }
             }
         };
 
@@ -168,7 +169,7 @@ function PopupHandler () {
                     this.popupVisible = true;
 
                     jQuery(document).trigger('popup-show', [this.popup]);
-                    jQuery('body').css('overflow','hidden');
+                    jQuery('body').css('overflow', 'hidden');
                     this.popupWrapper.show();
                     this.centerVertically();
                     if ( this.customWrapperBackground !== '' ) {
@@ -198,7 +199,7 @@ function PopupHandler () {
             this.popupWrapper.hide();
             this.popup.html('');
 
-            jQuery('body').css('overflow','visible');
+            jQuery('body').css('overflow', 'visible');
             this.setPopupStyles();
             if ( !this.popupVisible ) {
                 this.popupWrapper.css('background', "transparent");
@@ -336,6 +337,13 @@ function PopupHandler () {
                     });
                 }
             });
+
+            if ( this.handleAllForms !== undefined && typeof this.handleAllForms === 'function' ) {
+                jQuery(document).on('submit', '.' + this.popupClass + " form", function ( event ) {
+                    event.preventDefault();
+                    $this.handleAllForms(jQuery(this));
+                });
+            }
         };
 
         this.popupTriggerCallback = function ( trigger ) {
@@ -362,6 +370,7 @@ function PopupHandler () {
             this.popup.attr('style', this.popupStyles);
             this.popupCloseBtn.attr('style', this.popupCloseBtnStyles);
             this.popupCloseBtn.css('fill', this.closeButtonColor);
+            jQuery('[' + this.triggerAttribute + ']').css('cursor', 'pointer');
 
             if ( this.animatedShow ) {
                 transition.push("padding " + this.popupShowSpeed / 1000 + "s");
