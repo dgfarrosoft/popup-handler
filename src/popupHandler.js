@@ -89,7 +89,7 @@ function PopupHandler () {
                 var content;
                 var popupCode;
                 var triggerElement;
-                $.each(ajaxRequestData[this.ajaxDataObjectName], function ( index, popupRequestData ) {
+                jQuery.each(ajaxRequestData[this.ajaxDataObjectName], function ( index, popupRequestData ) {
                     triggerElement = popupRequestData.element;
                     var data = $this.ajaxAction != '' ? {'action': $this.ajaxAction} : {};
                     data[$this.ajaxDataObjectName] = {};
