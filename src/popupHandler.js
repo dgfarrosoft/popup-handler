@@ -54,7 +54,8 @@ function PopupHandler () {
 
         this.getPopupsContent = function () {
             var $this = this;
-            var ajaxRequestData = this.getAjaxRequestData(this.allElementsAtOnce);
+            this.setPopupAttributes();
+            var ajaxRequestData = this.getAjaxRequestData();
             if ( this.allElementsAtOnce ) {
                 var isRequestsSame = this.isEqual(ajaxRequestData, this.ajaxRequestData);
                 this.ajaxRequestData = ajaxRequestData;
@@ -183,6 +184,7 @@ function PopupHandler () {
             } else {
                 console.log('showPopup');
                 console.log(popupType);
+                console.log(this.popupContents);
             }
         };
 
@@ -295,9 +297,26 @@ function PopupHandler () {
             this.popupWrapper = this.popup.closest('.' + this.popupWrapperClass);
         };
 
+        this.setPopupAttributes = function () {
+            if ( this.triggerSelectors !== undefined ) {
+                var selectors;
+                for ( var trigger in this.triggerSelectors ) {
+                    selectors = this.triggerSelectors[trigger].join(',');
+                    $(selectors).attr(this.triggerAttribute, trigger);
+                }
+            }
+        };
+
         this.initEventListeners = function () {
             var $this = this;
             var attr;
+            //if ( this.triggerSelectors !== undefined ) {
+            //    var selectors;
+            //    for ( var trigger in this.triggerSelectors ) {
+            //        selectors = this.triggerSelectors[trigger].join(',');
+            //        $(document).on('click', selectors, this.popupTriggerCallback(trigger));
+            //    }
+            //}
             jQuery(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
                 event.preventDefault();
 
@@ -321,6 +340,13 @@ function PopupHandler () {
                     });
                 }
             });
+        };
+
+        this.popupTriggerCallback = function ( trigger ) {
+            var $this = this;
+            return function () {
+                $this.showPopup(trigger);
+            }
         };
 
         this.centerVertically = function ( popup ) {
