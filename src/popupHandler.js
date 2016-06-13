@@ -193,7 +193,29 @@ function PopupHandler () {
             }
         };
 
-        this.hidePopup = function () {
+        this.hidePopup = function ( message, timeout, redirectUrl ) {
+            var $this = this;
+
+            if ( message !== undefined && message !== '' ) {
+                $this.popup.html(message);
+            }
+
+            if ( timeout === undefined ) {
+                $this.closePopup(redirectUrl);
+
+            } else {
+                setTimeout(function () {
+                    $this.closePopup(redirectUrl);
+                }, timeout)
+            }
+
+            this.popupVisible = false;
+        };
+
+        this.closePopup = function (redirectUrl) {
+            if ( redirectUrl !== undefined ) {
+                document.location.href = redirectUrl;
+            }
             this.popupWrapper.css('-webkit-transition', 'none');
             this.popupWrapper.css('transition', 'none');
 
@@ -205,9 +227,7 @@ function PopupHandler () {
             if ( !this.popupVisible ) {
                 this.popupWrapper.css('background', "transparent");
             }
-            this.popupVisible = false;
         };
-
         this.getSingleAjaxRequestData = function ( element, requestData ) {
             if ( requestData === undefined ) {
                 requestData = {};
@@ -342,7 +362,7 @@ function PopupHandler () {
             if ( this.handleAllForms !== undefined && typeof this.handleAllForms === 'function' ) {
                 jQuery(document).on('submit', '.' + this.popupClass + " form", function ( event ) {
                     event.preventDefault();
-                    $this.handleAllForms(jQuery(this));
+                    $this.handleAllForms(jQuery(this), $this);
                 });
             }
         };
