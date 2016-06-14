@@ -212,7 +212,7 @@ function PopupHandler () {
             this.popupVisible = false;
         };
 
-        this.closePopup = function (redirectUrl) {
+        this.closePopup = function ( redirectUrl ) {
             if ( redirectUrl !== undefined ) {
                 document.location.href = redirectUrl;
             }
@@ -228,6 +228,7 @@ function PopupHandler () {
                 this.popupWrapper.css('background', "transparent");
             }
         };
+
         this.getSingleAjaxRequestData = function ( element, requestData ) {
             if ( requestData === undefined ) {
                 requestData = {};
@@ -346,7 +347,8 @@ function PopupHandler () {
                     $this.popupCloseSelectors = [$this.popupCloseSelectors];
                 }
 
-                jQuery($this.popupCloseSelectors.join(',')).click(function () {
+                jQuery($this.popupCloseSelectors.join(',')).click(function ( event ) {
+                    event.preventDefault();
                     $this.hidePopup();
                 });
 
