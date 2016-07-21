@@ -29,6 +29,7 @@ function PopupHandler () {
         this.customWrapperBackground = '';
         this.closeButtonSize = '40px';
         this.closeButtonColor = "#000";
+        this.firstLoad = true;
         this.popupStyles = 'max-width: 400px;margin: 0 auto;background: white;padding: 30px;border-radius: 3px;'
         this.popupWrapperStyles = 'background:transparent;position:fixed;z-index:100;display:none;height: 100%;width: 100%;left:0;top:0;';
         this.popupCloseImage = '<svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px" viewBox="0 0 371.23 371.23" style="enable-background:new 0 0 371.23 371.23;" xml:space="preserve"><polygon points="371.23,21.213 350.018,0 185.615,164.402 21.213,0 0,21.213 164.402,185.615 0,350.018 21.213,371.23 185.615,206.828 350.018,371.23 371.23,350.018 206.828,185.615 "/><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g><g></g></svg>';
@@ -54,28 +55,32 @@ function PopupHandler () {
         };
 
         this.getPopupsContent = function () {
-            var $this = this;
+            var _this = this;
             this.setPopupAttributes();
             var ajaxRequestData = this.getAjaxRequestData();
             if ( this.allElementsAtOnce ) {
+
                 var isRequestsSame = this.isEqual(ajaxRequestData, this.ajaxRequestData);
                 this.ajaxRequestData = ajaxRequestData;
                 if ( Object.keys(ajaxRequestData[this.ajaxDataObjectName]).length !== 0 && this.ajaxUrl !== '' && !isRequestsSame ) {
                     jQuery.ajax({
-                        url: $this.ajaxUrl,
+                        url: _this.ajaxUrl,
                         type: "POST",
                         data: ajaxRequestData,
                         success: function ( response ) {
                             if ( response !== "no content" ) {
                                 response = jQuery.parseJSON(response);
                                 for ( var popupType in response ) {
-                                    $this.popupContents[popupType] = {
+                                    _this.popupContents[popupType] = {
                                         popupID: response[popupType].formID,
                                         content: response[popupType].content
                                     };
-                                    $this.popupContents[popupType].popupID = $this.popupContents[popupType].popupID === undefined ? popupType : $this.popupContents[popupType].popupID;
+                                    _this.popupContents[popupType].popupID = _this.popupContents[popupType].popupID === undefined ? popupType : _this.popupContents[popupType].popupID;
                                 }
-
+                                if ( _this.firstLoad ) {
+                                    jQuery(document).trigger('popups-content-loaded');
+                                    _this.firstLoad = false;
+                                }
                             } else {
                                 console.log(response);
                             }
@@ -90,30 +95,37 @@ function PopupHandler () {
                 var content;
                 var popupCode;
                 var triggerElement;
+                var popupsQuantity = ajaxRequestData[this.ajaxDataObjectName].length;
+                var loadedContents = 0;
                 jQuery.each(ajaxRequestData[this.ajaxDataObjectName], function ( index, popupRequestData ) {
+                    var data = _this.ajaxAction != '' ? {'action': _this.ajaxAction} : {};
                     triggerElement = popupRequestData.element;
-                    var data = $this.ajaxAction != '' ? {'action': $this.ajaxAction} : {};
-                    data[$this.ajaxDataObjectName] = {};
+                    data[_this.ajaxDataObjectName] = {};
 
-                    data[$this.ajaxDataObjectName].popupID = popupRequestData.popupID;
-                    data[$this.ajaxDataObjectName].request = popupRequestData.request;
+                    data[_this.ajaxDataObjectName].popupID = popupRequestData.popupID;
+                    data[_this.ajaxDataObjectName].request = popupRequestData.request;
                     popupCode = btoa(JSON.stringify(data));
-                    if ( $this.popupContents[popupCode] === undefined ) {
+                    if ( _this.popupContents[popupCode] === undefined ) {
                         jQuery.ajax({
-                            url: $this.ajaxUrl,
+                            url: _this.ajaxUrl,
                             type: "POST",
                             data: data,
                             success: function ( response ) {
                                 if ( response !== "no content" ) {
                                     response = JSON.parse(response);
-                                    popupID = response.formID !== undefined ? response.formID : data[$this.ajaxDataObjectName].popupID;
+                                    popupID = response.formID !== undefined ? response.formID : data[_this.ajaxDataObjectName].popupID;
                                     content = response.content !== undefined ? response.content : '';
                                     popupCode = btoa(JSON.stringify(data));
-                                    $this.popupContents[popupCode] = {
+                                    _this.popupContents[popupCode] = {
                                         popupID: popupID,
                                         content: content,
                                         element: triggerElement
                                     };
+                                    loadedContents++;
+                                    if ( loadedContents === popupsQuantity && _this.firstLoad ) {
+                                        jQuery(document).trigger('popups-content-loaded');
+                                        _this.firstLoad = false;
+                                    }
                                 } else {
                                     console.log(response);
                                 }
@@ -129,7 +141,7 @@ function PopupHandler () {
         };
 
         this.fillPopup = function ( popupType ) {
-            var $this = this;
+            var _this = this;
             var formID = this.popupContents[popupType].popupID;
             this.popup.html(this.popupContents[popupType].content);
             this.getPopupsContent();
@@ -139,8 +151,8 @@ function PopupHandler () {
                         event.preventDefault();
                         var currentForm = jQuery(this);
 
-                        if ( !currentForm.hasClass($this.disabledFormClass) ) {
-                            $this.formSubmission($this, formID, currentForm);
+                        if ( !currentForm.hasClass(_this.disabledFormClass) ) {
+                            _this.formSubmission(_this, formID, currentForm);
                         }
                     });
                 }
@@ -155,13 +167,13 @@ function PopupHandler () {
             defer = defer === undefined ? false : defer;
             var attr;
             if ( typeof popupType !== 'string' ) {
-                attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
-                popupType = popupType.attr(attr);
+                if ( this.allElementsAtOnce ) {
+                    attr = defer ? this.deferredTriggerAttribute : this.triggerAttribute;
+                    popupType = popupType.attr(attr);
+                } else {
+                    popupType = popupType.attr(this.hashAttribute);
+                }
             }
-            if ( this.allElementsAtOnce ) {
-                popupType = popupType.attr(this.hashAttribute);
-            }
-
             this.hidePopup();
             if ( this.popupContents[popupType] !== undefined ) {
                 if ( this.popupContents[popupType].popupID !== "" ) {
@@ -194,18 +206,18 @@ function PopupHandler () {
         };
 
         this.hidePopup = function ( message, timeout, redirectUrl ) {
-            var $this = this;
+            var _this = this;
 
             if ( message !== undefined && message !== '' ) {
-                $this.popup.html(message);
+                _this.popup.html(message);
             }
 
             if ( timeout === undefined ) {
-                $this.closePopup(redirectUrl);
+                _this.closePopup(redirectUrl);
 
             } else {
                 setTimeout(function () {
-                    $this.closePopup(redirectUrl);
+                    _this.closePopup(redirectUrl);
                 }, timeout)
             }
 
@@ -334,45 +346,46 @@ function PopupHandler () {
         };
 
         this.initEventListeners = function () {
-            var $this = this;
+            var _this = this;
             var attr;
             jQuery(document).on('click', '[' + this.triggerAttribute + ']', function ( event ) {
                 event.preventDefault();
 
-                attr = $this.allElementsAtOnce ? $this.triggerAttribute : 'data-hash';
+                attr = _this.allElementsAtOnce ? _this.triggerAttribute : 'data-hash';
 
-                $this.showPopup(jQuery(this).attr(attr));
+                _this.showPopup(jQuery(this).attr(attr));
 
-                if ( typeof $this.popupCloseSelectors === 'string' ) {
-                    $this.popupCloseSelectors = [$this.popupCloseSelectors];
+                if ( typeof _this.popupCloseSelectors === 'string' ) {
+                    _this.popupCloseSelectors = [_this.popupCloseSelectors];
                 }
 
-                jQuery($this.popupCloseSelectors.join(',')).click(function ( event ) {
-                    event.preventDefault();
-                    $this.hidePopup();
-                });
-
-                if ( $this.closeOnWrapperClick ) {
-                    jQuery(document).click(function ( event ) {
-                        if ( jQuery(event.target).hasClass($this.popupWrapperClass) ) {
-                            $this.hidePopup();
-                        }
-                    });
-                }
             });
+
+            jQuery(_this.popupCloseSelectors.join(',')).click(function ( event ) {
+                event.preventDefault();
+                _this.hidePopup();
+            });
+
+            if ( _this.closeOnWrapperClick ) {
+                jQuery(document).click(function ( event ) {
+                    if ( jQuery(event.target).hasClass(_this.popupWrapperClass) ) {
+                        _this.hidePopup();
+                    }
+                });
+            }
 
             if ( this.handleAllForms !== undefined && typeof this.handleAllForms === 'function' ) {
                 jQuery(document).on('submit', '.' + this.popupClass + " form", function ( event ) {
                     event.preventDefault();
-                    $this.handleAllForms(jQuery(this), $this);
+                    _this.handleAllForms(jQuery(this), _this);
                 });
             }
         };
 
         this.popupTriggerCallback = function ( trigger ) {
-            var $this = this;
+            var _this = this;
             return function () {
-                $this.showPopup(trigger);
+                _this.showPopup(trigger);
             }
         };
 
